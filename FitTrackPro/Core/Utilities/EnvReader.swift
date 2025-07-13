@@ -10,9 +10,8 @@ class EnvReader {
     
     private func loadEnvFile() {
         guard let path = Bundle.main.path(forResource: ".env", ofType: nil),
-              let content = try? String(contentsOfFile: path) else {
-            print("⚠️ .env file not found in bundle")
-            return
+              let content = try? String(contentsOfFile: path, encoding: .utf8) else {
+            fatalError("⚠️ .env file not found in bundle")
         }
         
         parseEnvContent(content)
