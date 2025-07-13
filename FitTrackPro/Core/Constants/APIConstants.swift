@@ -13,6 +13,7 @@ struct APIConstants {
         static let bodyPartList = "/exercises/bodyPartList"
         static let targetList = "/exercises/targetList"
         static let equipmentList = "/exercises/equipmentList"
+        static let image = "/image"
     }
     
     struct Headers {

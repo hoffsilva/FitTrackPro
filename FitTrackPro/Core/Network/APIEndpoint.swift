@@ -9,6 +9,7 @@ enum APIEndpoint {
     case bodyPartList
     case targetList
     case equipmentList
+    case exerciseImage(ImageParameters)
     
     var path: String {
         switch self {
@@ -26,6 +27,8 @@ enum APIEndpoint {
             return APIConstants.Endpoints.targetList
         case .equipmentList:
             return APIConstants.Endpoints.equipmentList
+        case .exerciseImage:
+            return APIConstants.Endpoints.image
         }
     }
     
@@ -40,6 +43,8 @@ enum APIEndpoint {
              .exercisesByTarget(_, let params),
              .exercisesByEquipment(_, let params):
             return params?.toDictionary()
+        case .exerciseImage(let params):
+            return params.toDictionary()
         case .bodyPartList, .targetList, .equipmentList:
             return nil
         }

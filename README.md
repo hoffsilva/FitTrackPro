@@ -38,6 +38,7 @@ FitTrackPro/
 - **Swift** - Programming language
 - **SwiftUI** - UI framework
 - **Alamofire** - HTTP networking client
+- **SDWebImageSwiftUI** - Animated GIF and image loading
 - **Clean Architecture** - Architectural pattern
 - **MVVM** - Presentation pattern
 
@@ -53,6 +54,13 @@ The project uses the **ExerciseDB API** via RapidAPI to fetch exercise data:
   - `/exercises/bodyPartList` - List of body parts
   - `/exercises/targetList` - List of target muscles
   - `/exercises/equipmentList` - List of equipment
+  - `/image` - Get animated GIF for specific exercise with resolution support
+
+### 🎬 GIF Support
+- Multiple resolutions: 180p, 360p, 720p, 1080p
+- Animated exercise demonstrations
+- Automatic caching and optimization
+- Smooth loading with placeholders
 
 ## 🚀 How to Run
 
