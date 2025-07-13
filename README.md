@@ -1,76 +1,98 @@
 # FitTrackPro
 
-Um aplicativo iOS para rastreamento de fitness e atividades físicas, desenvolvido em SwiftUI seguindo os princípios da Clean Architecture.
+An iOS fitness tracking application developed in SwiftUI following Clean Architecture principles.
 
-## 📱 Sobre o Projeto
+## 📱 About the Project
 
-FitTrackPro é um aplicativo de fitness que permite aos usuários monitorar suas atividades físicas, treinos e progresso de forma intuitiva e eficiente.
+FitTrackPro is a fitness application that allows users to monitor their physical activities, workouts, and progress in an intuitive and efficient way.
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
-O projeto segue os princípios da **Clean Architecture**, organizando o código em camadas bem definidas:
+The project follows **Clean Architecture** principles, organizing the code into well-defined layers:
 
 ```
 FitTrackPro/
-├── Domain/           # Regras de negócio e entidades
-│   ├── Entities/     # Modelos de domínio
-│   ├── UseCases/     # Casos de uso da aplicação
-│   └── Repositories/ # Contratos dos repositórios
-├── Data/            # Camada de dados
-│   ├── Repositories/ # Implementação dos repositórios
-│   ├── DataSources/  # Fontes de dados
-│   │   ├── Local/    # Dados locais (Core Data, UserDefaults)
-│   │   └── Remote/   # APIs e serviços remotos
-│   └── Models/       # Modelos de dados
-├── Presentation/     # Interface do usuário
-│   ├── Views/        # Views em SwiftUI
+├── Domain/           # Business rules and entities
+│   ├── Entities/     # Domain models
+│   ├── UseCases/     # Application use cases
+│   └── Repositories/ # Repository contracts
+├── Data/            # Data layer
+│   ├── Repositories/ # Repository implementations
+│   ├── DataSources/  # Data sources
+│   │   ├── Local/    # Local data (Core Data, UserDefaults)
+│   │   └── Remote/   # Remote APIs and services
+│   └── Models/       # Data models
+├── Presentation/     # User interface
+│   ├── Views/        # SwiftUI Views
 │   ├── ViewModels/   # ViewModels (MVVM)
-│   └── Controllers/  # Controladores
-└── Core/            # Utilitários e extensões
-    ├── Extensions/   # Extensões do Swift/SwiftUI
-    ├── Utilities/    # Funções utilitárias
-    ├── Constants/    # Constantes da aplicação
-    └── Network/      # Configurações de rede
+│   └── Controllers/  # Controllers
+└── Core/            # Utilities and extensions
+    ├── Extensions/   # Swift/SwiftUI extensions
+    ├── Utilities/    # Utility functions
+    ├── Constants/    # Application constants
+    └── Network/      # Network configurations
 ```
 
-## 🛠️ Tecnologias
+## 🛠️ Technologies
 
-- **Swift** - Linguagem de programação
-- **SwiftUI** - Framework de interface
-- **Clean Architecture** - Padrão arquitetural
-- **MVVM** - Padrão de apresentação
+- **Swift** - Programming language
+- **SwiftUI** - UI framework
+- **Alamofire** - HTTP networking client
+- **Clean Architecture** - Architectural pattern
+- **MVVM** - Presentation pattern
 
-## 🚀 Como Executar
+## 🔧 API
 
-1. Clone o repositório:
+The project uses the **ExerciseDB API** via RapidAPI to fetch exercise data:
+- Base URL: `https://exercisedb.p.rapidapi.com`
+- Available endpoints:
+  - `/exercises` - List all exercises
+  - `/exercises/bodyPart/{bodyPart}` - Exercises by body part
+  - `/exercises/target/{target}` - Exercises by target muscle
+  - `/exercises/equipment/{equipment}` - Exercises by equipment
+  - `/exercises/bodyPartList` - List of body parts
+  - `/exercises/targetList` - List of target muscles
+  - `/exercises/equipmentList` - List of equipment
+
+## 🚀 How to Run
+
+1. Clone the repository:
 ```bash
 git clone https://github.com/hoffsilva/FitTrackPro.git
 ```
 
-2. Abra o projeto no Xcode:
+2. Set up the API Key:
+   - Get a key from [ExerciseDB API on RapidAPI](https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb)
+   - Edit the `.env` file in the project root:
+   ```
+   RAPID_API_KEY=your_key_here
+   ```
+   - Add the `.env` file to the Xcode bundle (drag it into the project)
+
+3. Open the project in Xcode:
 ```bash
 open FitTrackPro.xcodeproj
 ```
 
-3. Execute o projeto no simulador ou dispositivo físico
+4. Run the project on simulator or physical device
 
-## 📋 Funcionalidades Planejadas
+## 📋 Planned Features
 
-- [ ] Rastreamento de exercícios
-- [ ] Histórico de treinos
-- [ ] Métricas de progresso
-- [ ] Metas pessoais
-- [ ] Perfil do usuário
+- [ ] Exercise tracking
+- [ ] Workout history
+- [ ] Progress metrics
+- [ ] Personal goals
+- [ ] User profile
 
-## 🤝 Contribuição
+## 🤝 Contributing
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+Contributions are welcome! Feel free to open issues and pull requests.
 
-## 📄 Licença
+## 📄 License
 
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+This project is under the MIT license. See the LICENSE file for more details.
 
-## 👨‍💻 Autor
+## 👨‍💻 Author
 
 **Hoff Henry Pereira da Silva**
 - GitHub: [@hoffsilva](https://github.com/hoffsilva)
