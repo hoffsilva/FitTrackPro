@@ -37,7 +37,10 @@ struct ExerciseLibraryView: View {
                             }
                         } else {
                             ForEach(viewModel.exercises, id: \.id) { exercise in
-                                ExerciseRowView(exercise: exercise)
+                                NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                                    ExerciseRowView(exercise: exercise)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                             
                             if viewModel.exercises.isEmpty {
