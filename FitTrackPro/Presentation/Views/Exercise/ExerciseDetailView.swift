@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ExerciseDetailView: View {
     let exercise: Exercise
-    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         ScrollView {
@@ -28,22 +27,6 @@ struct ExerciseDetailView: View {
         }
         .background(.backgroundPrimary)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                        Text("Back")
-                            .font(.system(size: 16, weight: .medium))
-                    }
-                    .foregroundColor(.primaryOrange)
-                }
-            }
-        }
     }
 }
 
