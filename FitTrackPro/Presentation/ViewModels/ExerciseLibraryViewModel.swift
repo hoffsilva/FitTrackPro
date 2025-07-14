@@ -8,6 +8,7 @@ class ExerciseLibraryViewModel: ObservableObject {
     @Published var selectedBodyPart: String = "all"
     @Published var searchText: String = ""
     @Published var isLoading: Bool = false
+    @Published var isSearching: Bool = false
     @Published var errorMessage: String? = nil
     
     private let exerciseService: ExerciseServiceProtocol
@@ -53,25 +54,27 @@ class ExerciseLibraryViewModel: ObservableObject {
     func loadExercises() async {
         do {
             isLoading = true
+            isSearching = !searchText.isEmpty
             errorMessage = nil
             
-            let parameters = PaginationParameters(limit: 100, offset: 0)
+            let parameters = PaginationParameters(limit: 200, offset: 0)
             var exercisesList: [Exercise]
             
-            // Load exercises based on selected body part
-            if selectedBodyPart == "all" {
-                exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
-            } else {
-                exercisesList = try await exerciseService.getExercisesByBodyPart(selectedBodyPart, parameters: parameters)
-            }
-            
-            // Apply search filter
+            // If searching, always load all exercises and filter by search term
             if !searchText.isEmpty {
+                exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
                 exercisesList = exercisesList.filter { exercise in
                     exercise.name.localizedCaseInsensitiveContains(searchText) ||
                     exercise.bodyPart.localizedCaseInsensitiveContains(searchText) ||
                     exercise.target.localizedCaseInsensitiveContains(searchText) ||
                     exercise.equipment.localizedCaseInsensitiveContains(searchText)
+                }
+            } else {
+                // When not searching, filter by selected body part
+                if selectedBodyPart == "all" {
+                    exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
+                } else {
+                    exercisesList = try await exerciseService.getExercisesByBodyPart(selectedBodyPart, parameters: parameters)
                 }
             }
             
@@ -83,10 +86,13 @@ class ExerciseLibraryViewModel: ObservableObject {
         }
         
         isLoading = false
+        isSearching = false
     }
     
     func selectBodyPart(_ bodyPart: String) {
         selectedBodyPart = bodyPart
+        // Clear search when selecting a category
+        searchText = ""
         Task {
             await loadExercises()
         }

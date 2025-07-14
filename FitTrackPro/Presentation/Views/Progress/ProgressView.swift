@@ -19,7 +19,7 @@ struct ProgressView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .background(Color("BackgroundPrimary"))
+            .background(.backgroundPrimary)
             .navigationBarHidden(true)
         }
     }
@@ -30,14 +30,14 @@ struct ProgressHeaderView: View {
         HStack {
             Text("Your Progress")
                 .font(.system(size: 28, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
             Spacer()
             
             Button(action: {}) {
                 Image(systemName: "calendar")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(Color("TextSecondary"))
+                    .foregroundColor(.textSecondary)
             }
         }
         .padding(.top, 20)
@@ -50,16 +50,16 @@ struct WeeklyChartView: View {
             HStack {
                 Text("Weekly Activity")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                 
                 Spacer()
                 
                 Text("This Week")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(Color("TextSecondary"))
+                    .foregroundColor(.textSecondary)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color("BackgroundPrimary"))
+                    .background(.backgroundPrimary)
                     .cornerRadius(8)
             }
             
@@ -69,7 +69,7 @@ struct WeeklyChartView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(
                             LinearGradient(
-                                colors: [Color("PrimaryOrange").opacity(0.1), Color("PrimaryOrange").opacity(0.0)],
+                                colors: [.primaryOrange.opacity(0.1), .primaryOrange.opacity(0.0)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -78,7 +78,7 @@ struct WeeklyChartView: View {
                     
                     // Simple line representation
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(Color("PrimaryOrange"))
+                        .fill(.primaryOrange)
                         .frame(height: 3)
                         .frame(maxWidth: .infinity, alignment: .bottom)
                         .padding(.bottom, 10)
@@ -89,18 +89,18 @@ struct WeeklyChartView: View {
                     ForEach(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], id: \.self) { day in
                         Text(day)
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(Color("TextSecondary"))
+                            .foregroundColor(.textSecondary)
                             .frame(maxWidth: .infinity)
                     }
                 }
             }
         }
         .padding(20)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(.gray.opacity(0.2), lineWidth: 2)
         )
     }
 }
@@ -112,7 +112,7 @@ struct ProgressStatsView: View {
                 value: "12",
                 label: "Workouts completed",
                 gradient: LinearGradient(
-                    colors: [Color("PrimaryOrange"), Color("PrimaryOrange").opacity(0.8)],
+                    colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -122,7 +122,7 @@ struct ProgressStatsView: View {
                 value: "4.2",
                 label: "Avg hours/week",
                 gradient: LinearGradient(
-                    colors: [Color("PrimaryBlue"), Color("PrimaryBlue").opacity(0.8)],
+                    colors: [.primaryBlue, .primaryBlue.opacity(0.8)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -143,7 +143,7 @@ struct AchievementsView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Achievements")
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
             LazyVGrid(columns: [
                 GridItem(.flexible()),
@@ -173,7 +173,7 @@ struct AchievementBadgeView: View {
             
             Text(achievement.title)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(achievement.isEarned ? .white : Color("TextPrimary"))
+                .foregroundColor(achievement.isEarned ? .white : .textPrimary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -181,12 +181,12 @@ struct AchievementBadgeView: View {
         .background(
             achievement.isEarned ?
             LinearGradient(
-                colors: [Color.green, Color.green.opacity(0.8)],
+                colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             ) :
             LinearGradient(
-                colors: [Color.white, Color.white],
+                colors: [.white, .white],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -194,7 +194,7 @@ struct AchievementBadgeView: View {
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(achievement.isEarned ? Color.green : Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(achievement.isEarned ? .primaryOrange : .gray.opacity(0.2), lineWidth: 2)
         )
     }
 }

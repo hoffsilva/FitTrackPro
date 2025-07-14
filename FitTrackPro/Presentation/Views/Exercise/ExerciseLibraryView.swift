@@ -10,14 +10,16 @@ struct ExerciseLibraryView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("Exercise Library")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(Color("TextPrimary"))
+                        .foregroundColor(.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     // Search Bar
                     SearchBarView(searchText: $viewModel.searchText)
                     
-                    // Category Tabs
-                    CategoryTabsView(viewModel: viewModel)
+                    // Category Tabs (hide when searching)
+                    if !viewModel.isSearching {
+                        CategoryTabsView(viewModel: viewModel)
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 20)
@@ -39,7 +41,7 @@ struct ExerciseLibraryView: View {
                             }
                             
                             if viewModel.exercises.isEmpty {
-                                EmptyStateView()
+                                EmptyStateView(isSearching: viewModel.isSearching, searchText: viewModel.searchText)
                             }
                         }
                     }
@@ -47,7 +49,7 @@ struct ExerciseLibraryView: View {
                     .padding(.top, 20)
                 }
             }
-            .background(Color("BackgroundPrimary"))
+            .background(.backgroundPrimary)
             .navigationBarHidden(true)
             .onAppear {
                 viewModel.loadInitialData()
@@ -63,19 +65,19 @@ struct SearchBarView: View {
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(Color("TextSecondary"))
+                .foregroundColor(.textSecondary)
                 .font(.system(size: 16, weight: .medium))
             
             TextField("Search exercises...", text: $searchText)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
         }
         .padding(16)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(.gray.opacity(0.2), lineWidth: 2)
         )
     }
 }
@@ -108,16 +110,16 @@ struct CategoryTabButton: View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(isSelected ? .white : Color("TextSecondary"))
+                .foregroundColor(isSelected ? .white : .textSecondary)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(
-                    isSelected ? Color("PrimaryOrange") : Color.white
+                    isSelected ? .primaryOrange : .white
                 )
                 .cornerRadius(20)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(isSelected ? Color("PrimaryOrange") : Color.gray.opacity(0.2), lineWidth: 2)
+                        .stroke(isSelected ? .primaryOrange : .gray.opacity(0.2), lineWidth: 2)
                 )
         }
         .buttonStyle(PlainButtonStyle())
@@ -140,12 +142,12 @@ struct ExerciseRowView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(exercise.name.capitalized)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                     .lineLimit(2)
                 
                 Text("\(exercise.bodyPart.capitalized) • \(exercise.category.rawValue.capitalized) • \(exercise.equipment.capitalized)")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("TextSecondary"))
+                    .foregroundColor(.textSecondary)
                     .lineLimit(1)
             }
             
@@ -153,14 +155,14 @@ struct ExerciseRowView: View {
             
             Image(systemName: "chevron.right")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Color("TextSecondary"))
+                .foregroundColor(.textSecondary)
         }
         .padding(16)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(.gray.opacity(0.2), lineWidth: 2)
         )
     }
 }

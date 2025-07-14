@@ -19,7 +19,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .background(Color("BackgroundPrimary"))
+            .background(.backgroundPrimary)
             .navigationBarHidden(true)
         }
     }
@@ -32,11 +32,11 @@ struct HomeHeaderView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Good morning, Hoff!")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(Color("TextPrimary"))
+                        .foregroundColor(.textPrimary)
                     
                     Text("Tuesday, July 13")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(Color("TextSecondary"))
+                        .foregroundColor(.textSecondary)
                 }
                 
                 Spacer()
@@ -44,7 +44,7 @@ struct HomeHeaderView: View {
                 Button(action: {}) {
                     Image(systemName: "bell")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(Color("TextSecondary"))
+                        .foregroundColor(.textSecondary)
                 }
             }
         }
@@ -59,7 +59,7 @@ struct StatsGridView: View {
                 value: "1,247",
                 label: "Calories burned",
                 gradient: LinearGradient(
-                    colors: [Color("PrimaryOrange"), Color("PrimaryOrange").opacity(0.8)],
+                    colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -69,7 +69,7 @@ struct StatsGridView: View {
                 value: "8,432",
                 label: "Steps today",
                 gradient: LinearGradient(
-                    colors: [Color("PrimaryBlue"), Color("PrimaryBlue").opacity(0.8)],
+                    colors: [.primaryBlue, .primaryBlue.opacity(0.8)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -106,7 +106,7 @@ struct QuickActionsView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Quick Actions")
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
             HStack(spacing: 12) {
                 QuickActionButton(
@@ -135,21 +135,21 @@ struct QuickActionButton: View {
             VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                 
                 Text(title)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .padding(.horizontal, 16)
-            .background(Color.white)
+            .background(.white)
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                    .stroke(.gray.opacity(0.2), lineWidth: 2)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -161,7 +161,7 @@ struct RecommendedSectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Recommended for You")
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
             RecommendedExerciseCard(
                 icon: "💪",
@@ -182,7 +182,7 @@ struct RecommendedExerciseCard: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(LinearGradient(
-                        colors: [Color("PrimaryPurple"), Color("PrimaryPurple").opacity(0.8)],
+                        colors: [.primaryBlue, .primaryBlue.opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ))
@@ -195,21 +195,21 @@ struct RecommendedExerciseCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                 
                 Text(subtitle)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("TextSecondary"))
+                    .foregroundColor(.textSecondary)
             }
             
             Spacer()
         }
         .padding(16)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(.gray.opacity(0.2), lineWidth: 2)
         )
     }
 }

@@ -16,7 +16,7 @@ struct ProfileView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .background(Color("BackgroundPrimary"))
+            .background(.backgroundPrimary)
             .navigationBarHidden(true)
         }
     }
@@ -30,7 +30,7 @@ struct ProfileHeaderView: View {
                 ZStack {
                     Circle()
                         .fill(LinearGradient(
-                            colors: [Color("PrimaryOrange"), Color("PrimaryOrange").opacity(0.8)],
+                            colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ))
@@ -44,11 +44,11 @@ struct ProfileHeaderView: View {
                 VStack(spacing: 4) {
                     Text("Hoff Henry")
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(Color("TextPrimary"))
+                        .foregroundColor(.textPrimary)
                     
                     Text("Fitness Enthusiast")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(Color("TextSecondary"))
+                        .foregroundColor(.textSecondary)
                 }
             }
         }
@@ -72,11 +72,11 @@ struct ProfileStatsView: View {
             ProfileStatItem(value: "45", label: "Days Active")
         }
         .padding(20)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(.gray.opacity(0.2), lineWidth: 2)
         )
     }
 }
@@ -89,11 +89,11 @@ struct ProfileStatItem: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
             Text(label)
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(Color("TextSecondary"))
+                .foregroundColor(.textSecondary)
         }
         .frame(maxWidth: .infinity)
     }
@@ -112,7 +112,7 @@ struct SettingsSectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Settings")
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
             VStack(spacing: 0) {
                 ForEach(Array(settingsItems.enumerated()), id: \.offset) { index, item in
@@ -124,11 +124,11 @@ struct SettingsSectionView: View {
                     }
                 }
             }
-            .background(Color.white)
+            .background(.white)
             .cornerRadius(16)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                    .stroke(.gray.opacity(0.2), lineWidth: 2)
             )
         }
     }
@@ -147,19 +147,19 @@ struct SettingsRowView: View {
         HStack(spacing: 16) {
             Image(systemName: item.icon)
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(Color("PrimaryOrange"))
+                .foregroundColor(.primaryOrange)
                 .frame(width: 20)
             
             Text(item.title)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
             Spacer()
             
             if item.hasChevron {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("TextSecondary"))
+                    .foregroundColor(.textSecondary)
             }
         }
         .padding(.horizontal, 16)

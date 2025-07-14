@@ -30,16 +30,16 @@ struct FilterOptionButton: View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundColor(isSelected ? .white : Color("TextSecondary"))
+                .foregroundColor(isSelected ? .white : .textSecondary)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(
-                    isSelected ? Color("PrimaryBlue") : Color.white
+                    isSelected ? .primaryBlue : .white
                 )
                 .cornerRadius(16)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(isSelected ? Color("PrimaryBlue") : Color.gray.opacity(0.2), lineWidth: 1)
+                        .stroke(isSelected ? .primaryBlue : .gray.opacity(0.2), lineWidth: 1)
                 )
         }
         .buttonStyle(PlainButtonStyle())
