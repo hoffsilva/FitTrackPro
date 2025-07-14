@@ -9,7 +9,7 @@ struct FilterOptionsView: View {
                 HStack(spacing: 10) {
                     ForEach(viewModel.bodyParts, id: \.self) { option in
                         FilterOptionButton(
-                            title: option == "all" ? "All" : option.capitalized,
+                            title: option.displayName,
                             isSelected: viewModel.selectedBodyPart == option,
                             action: { viewModel.selectBodyPart(option) }
                         )

@@ -90,7 +90,7 @@ struct CategoryTabsView: View {
             HStack(spacing: 10) {
                 ForEach(viewModel.bodyParts, id: \.self) { bodyPart in
                     CategoryTabButton(
-                        title: bodyPart == "all" ? "All" : bodyPart.capitalized,
+                        title: bodyPart.displayName,
                         isSelected: viewModel.selectedBodyPart == bodyPart,
                         action: { viewModel.selectBodyPart(bodyPart) }
                     )
@@ -145,7 +145,7 @@ struct ExerciseRowView: View {
                     .foregroundColor(.textPrimary)
                     .lineLimit(2)
                 
-                Text("\(exercise.bodyPart.capitalized) • \(exercise.category.rawValue.capitalized) • \(exercise.equipment.capitalized)")
+                Text("\(exercise.bodyPart.displayName) • \(exercise.category.rawValue.capitalized) • \(exercise.equipment.capitalized)")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.textSecondary)
                     .lineLimit(1)
