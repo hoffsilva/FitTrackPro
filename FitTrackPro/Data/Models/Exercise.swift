@@ -34,7 +34,7 @@ enum BodyPart: String, Codable, CaseIterable {
     }
 }
 
-struct Exercise: Codable, Identifiable {
+struct Exercise: Codable, Identifiable, Equatable {
     let id: String
     let name: String
     let bodyPart: BodyPart
@@ -48,6 +48,19 @@ struct Exercise: Codable, Identifiable {
     
     private enum CodingKeys: String, CodingKey {
         case id, name, bodyPart, target, equipment, secondaryMuscles, instructions, description, difficulty, category
+    }
+    
+    init(id: String, name: String, bodyPart: BodyPart, target: String, equipment: String, secondaryMuscles: [String], instructions: [String], description: String, difficulty: Difficulty, category: ExerciseCategory) {
+        self.id = id
+        self.name = name
+        self.bodyPart = bodyPart
+        self.target = target
+        self.equipment = equipment
+        self.secondaryMuscles = secondaryMuscles
+        self.instructions = instructions
+        self.description = description
+        self.difficulty = difficulty
+        self.category = category
     }
     
     init(from decoder: Decoder) throws {

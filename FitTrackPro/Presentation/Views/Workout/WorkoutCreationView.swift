@@ -4,6 +4,7 @@ struct WorkoutCreationView: View {
     @ObservedObject var workoutViewModel: WorkoutViewModel
     @StateObject private var exerciseViewModel = ExerciseLibraryViewModel()
     @State private var workoutName: String = ""
+    @State private var selectedDays: [WeekDay] = []
     @State private var selectedExercises: [Exercise] = []
     @State private var showingExercisePicker = false
     @Environment(\.presentationMode) var presentationMode
@@ -15,6 +16,9 @@ struct WorkoutCreationView: View {
                     // Workout Name Section
                     WorkoutNameSection(workoutName: $workoutName)
                     
+                    // Schedule Days Section
+                    ScheduleDaysSection(selectedDays: $selectedDays)
+                    
                     // Selected Exercises Section
                     SelectedExercisesSection(
                         selectedExercises: $selectedExercises,
@@ -24,6 +28,7 @@ struct WorkoutCreationView: View {
                     // Create Workout Button
                     CreateWorkoutButton(
                         workoutName: workoutName,
+                        selectedDays: selectedDays,
                         selectedExercises: selectedExercises,
                         workoutViewModel: workoutViewModel
                     )
@@ -179,8 +184,78 @@ struct WorkoutExerciseRow: View {
     }
 }
 
+struct ScheduleDaysSection: View {
+    @Binding var selectedDays: [WeekDay]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Schedule Days")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.textPrimary)
+            
+            Text("Select which days of the week to schedule this workout")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.textSecondary)
+            
+            LazyHGrid(rows: [
+                GridItem(.flexible())
+            ], spacing: 8) {
+                ForEach(WeekDay.allCases, id: \.self) { day in
+                    DaySelectionButton(
+                        day: day,
+                        isSelected: selectedDays.contains(day),
+                        onToggle: {
+                            if selectedDays.contains(day) {
+                                selectedDays.removeAll { $0 == day }
+                            } else {
+                                selectedDays.append(day)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+        .padding(20)
+        .background(.white)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(.gray.opacity(0.2), lineWidth: 2)
+        )
+    }
+}
+
+struct DaySelectionButton: View {
+    let day: WeekDay
+    let isSelected: Bool
+    let onToggle: () -> Void
+    
+    private var twoLetterDay: String {
+        String(day.displayName.prefix(2))
+    }
+    
+    var body: some View {
+        Button(action: onToggle) {
+            Circle()
+                .fill(isSelected ? .primaryOrange : .backgroundPrimary)
+                .frame(width: 44, height: 44)
+                .overlay(
+                    Text(twoLetterDay)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(isSelected ? .white : .textPrimary)
+                )
+                .overlay(
+                    Circle()
+                        .stroke(isSelected ? .primaryOrange : .gray.opacity(0.3), lineWidth: 2)
+                )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 struct CreateWorkoutButton: View {
     let workoutName: String
+    let selectedDays: [WeekDay]
     let selectedExercises: [Exercise]
     let workoutViewModel: WorkoutViewModel
     @Environment(\.presentationMode) var presentationMode
@@ -193,6 +268,7 @@ struct CreateWorkoutButton: View {
         Button(action: {
             workoutViewModel.createNewWorkout(
                 name: workoutName.trimmingCharacters(in: .whitespacesAndNewlines),
+                scheduledDays: selectedDays,
                 exercises: selectedExercises
             )
             presentationMode.wrappedValue.dismiss()
