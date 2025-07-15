@@ -1,43 +1,135 @@
 import SwiftUI
 
+struct ActivityIndicator: View {
+    @State private var isAnimating = false
+    
+    var body: some View {
+        Circle()
+            .trim(from: 0, to: 0.8)
+            .stroke(
+                Color("PrimaryOrange"),
+                style: StrokeStyle(
+                    lineWidth: 3,
+                    lineCap: .round
+                )
+            )
+            .frame(width: 24, height: 24)
+            .rotationEffect(.degrees(isAnimating ? 360 : 0))
+            .animation(
+                Animation.linear(duration: 1.0)
+                    .repeatForever(autoreverses: false),
+                value: isAnimating
+            )
+            .onAppear {
+                isAnimating = true
+            }
+            .onDisappear {
+                isAnimating = false
+            }
+    }
+}
+
+struct CircularProgressView: View {
+    let progress: Double
+    let lineWidth: CGFloat
+    let size: CGFloat
+    let color: Color
+    
+    init(progress: Double, lineWidth: CGFloat = 8, size: CGFloat = 120, color: Color = Color("PrimaryOrange")) {
+        self.progress = progress
+        self.lineWidth = lineWidth
+        self.size = size
+        self.color = color
+    }
+    
+    var body: some View {
+        ZStack {
+            // Background circle
+            Circle()
+                .stroke(color.opacity(0.2), lineWidth: lineWidth)
+                .frame(width: size, height: size)
+            
+            // Progress circle
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    color,
+                    style: StrokeStyle(
+                        lineWidth: lineWidth,
+                        lineCap: .round
+                    )
+                )
+                .frame(width: size, height: size)
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut(duration: 1.0), value: progress)
+        }
+    }
+}
+
 struct ProgressView: View {
+    @StateObject private var viewModel = ProgressViewModel()
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     // Header
-                    ProgressHeaderView()
+                    ProgressHeaderView(viewModel: viewModel)
                     
                     // Weekly Chart
-                    WeeklyChartView()
+                    WeeklyChartView(viewModel: viewModel)
                     
                     // Stats Grid
-                    ProgressStatsView()
+                    ProgressStatsView(viewModel: viewModel)
                     
                     // Achievements
-                    AchievementsView()
+                    AchievementsView(viewModel: viewModel)
                 }
                 .padding(.horizontal, 16)
             }
             .background(.backgroundPrimary)
             .navigationBarHidden(true)
+            .refreshable {
+                await viewModel.refreshData()
+            }
+            .onAppear {
+                viewModel.loadProgressData()
+            }
         }
     }
 }
 
 struct ProgressHeaderView: View {
+    @ObservedObject var viewModel: ProgressViewModel
+    
     var body: some View {
         HStack {
-            Text("Your Progress")
-                .font(.system(size: 28, weight: .bold))
-                .foregroundColor(.textPrimary)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Your Progress")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(Color("TextPrimary"))
+                
+                if viewModel.progressStats.currentStreak > 0 {
+                    Text("\(viewModel.progressStats.currentStreak) day streak! 🔥")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(Color("PrimaryOrange"))
+                }
+            }
             
             Spacer()
             
-            Button(action: {}) {
-                Image(systemName: "calendar")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.textSecondary)
+            if viewModel.isLoading {
+                ActivityIndicator()
+            } else {
+                Button(action: {
+                    Task {
+                        await viewModel.refreshData()
+                    }
+                }) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(Color("TextSecondary"))
+                }
             }
         }
         .padding(.top, 20)
@@ -45,6 +137,8 @@ struct ProgressHeaderView: View {
 }
 
 struct WeeklyChartView: View {
+    @ObservedObject var viewModel: ProgressViewModel
+    
     var body: some View {
         VStack(spacing: 16) {
             HStack {
@@ -54,43 +148,72 @@ struct WeeklyChartView: View {
                 
                 Spacer()
                 
-                Text("This Week")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.textSecondary)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(.backgroundPrimary)
-                    .cornerRadius(8)
+                HStack(spacing: 8) {
+                    Button(action: {
+                        viewModel.selectPreviousWeek()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(Color("TextSecondary"))
+                    }
+                    
+                    Text(viewModel.getWeekDisplayText())
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(Color("TextSecondary"))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color("BackgroundPrimary"))
+                        .cornerRadius(8)
+                    
+                    Button(action: {
+                        viewModel.selectNextWeek()
+                    }) {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(viewModel.selectedWeekOffset >= 0 ? Color("TextSecondary").opacity(0.3) : Color("TextSecondary"))
+                    }
+                    .disabled(viewModel.selectedWeekOffset >= 0)
+                }
             }
             
             // Chart Area
             VStack(spacing: 16) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(
-                            LinearGradient(
-                                colors: [.primaryOrange.opacity(0.1), .primaryOrange.opacity(0.0)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
+                        .fill(Color("BackgroundPrimary"))
                         .frame(height: 120)
                     
-                    // Simple line representation
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(.primaryOrange)
-                        .frame(height: 3)
-                        .frame(maxWidth: .infinity, alignment: .bottom)
-                        .padding(.bottom, 10)
+                    // Activity bars
+                    HStack(alignment: .bottom, spacing: 8) {
+                        ForEach(viewModel.weeklyActivityData, id: \.date) { activity in
+                            VStack(spacing: 4) {
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(activity.hasWorkout ? Color("PrimaryOrange") : Color.gray.opacity(0.3))
+                                    .frame(width: 20, height: max(6, activity.activityLevel * 80))
+                                    .animation(.easeInOut(duration: 0.3), value: activity.activityLevel)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 10)
                 }
                 
                 // Week days
                 HStack {
-                    ForEach(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], id: \.self) { day in
-                        Text(day)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.textSecondary)
-                            .frame(maxWidth: .infinity)
+                    ForEach(viewModel.weeklyActivityData, id: \.date) { activity in
+                        VStack(spacing: 2) {
+                            Text(activity.dayName)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(activity.hasWorkout ? Color("TextPrimary") : Color("TextSecondary"))
+                            
+                            if activity.hasWorkout {
+                                Circle()
+                                    .fill(Color("PrimaryOrange"))
+                                    .frame(width: 4, height: 4)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                 }
             }
@@ -106,61 +229,98 @@ struct WeeklyChartView: View {
 }
 
 struct ProgressStatsView: View {
-    var body: some View {
-        HStack(spacing: 12) {
-            StatCardView(
-                value: "12",
-                label: "Workouts completed",
-                gradient: LinearGradient(
-                    colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-            
-            StatCardView(
-                value: "4.2",
-                label: "Avg hours/week",
-                gradient: LinearGradient(
-                    colors: [.primaryBlue, .primaryBlue.opacity(0.8)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-        }
-    }
-}
-
-struct AchievementsView: View {
-    let achievements = [
-        Achievement(icon: "🏆", title: "First Workout", isEarned: true),
-        Achievement(icon: "🔥", title: "5 Day Streak", isEarned: true),
-        Achievement(icon: "💎", title: "30 Day Goal", isEarned: false),
-        Achievement(icon: "👑", title: "100 Workouts", isEarned: false)
-    ]
+    @ObservedObject var viewModel: ProgressViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Achievements")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(.textPrimary)
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                StatCardView(
+                    value: "\(viewModel.progressStats.totalWorkouts)",
+                    label: "Total workouts",
+                    gradient: LinearGradient(
+                        colors: [Color("PrimaryOrange"), Color("PrimaryOrange").opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                
+                StatCardView(
+                    value: String(format: "%.1f", viewModel.progressStats.averageHoursPerWeek),
+                    label: "Avg hours/week",
+                    gradient: LinearGradient(
+                        colors: [Color("PrimaryBlue"), Color("PrimaryBlue").opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            }
             
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 12) {
-                ForEach(achievements, id: \.title) { achievement in
-                    AchievementBadgeView(achievement: achievement)
-                }
+            HStack(spacing: 12) {
+                StatCardView(
+                    value: "\(viewModel.progressStats.totalCaloriesBurned)",
+                    label: "Total calories",
+                    gradient: LinearGradient(
+                        colors: [Color("PrimaryPurple"), Color("PrimaryPurple").opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                
+                StatCardView(
+                    value: "\(viewModel.progressStats.currentStreak)",
+                    label: "Current streak",
+                    gradient: LinearGradient(
+                        colors: [Color.green, Color.green.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
             }
         }
     }
 }
 
-struct Achievement {
-    let icon: String
-    let title: String
-    let isEarned: Bool
+struct AchievementsView: View {
+    @ObservedObject var viewModel: ProgressViewModel
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Achievements")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(Color("TextPrimary"))
+                
+                Spacer()
+                
+                let earnedCount = viewModel.achievements.filter { $0.isEarned }.count
+                Text("\(earnedCount)/\(viewModel.achievements.count)")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Color("TextSecondary"))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color("BackgroundPrimary"))
+                    .cornerRadius(8)
+            }
+            
+            if viewModel.isLoading {
+                HStack {
+                    Spacer()
+                    ActivityIndicator()
+                    Spacer()
+                }
+                .padding(.vertical, 40)
+            } else {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: 12) {
+                    ForEach(viewModel.achievements, id: \.id) { achievement in
+                        AchievementBadgeView(achievement: achievement)
+                    }
+                }
+            }
+        }
+    }
 }
 
 struct AchievementBadgeView: View {
@@ -168,34 +328,57 @@ struct AchievementBadgeView: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            Text(achievement.icon)
-                .font(.system(size: 24))
+            ZStack {
+                Circle()
+                    .fill(achievement.isEarned ? Color("PrimaryOrange") : Color.gray.opacity(0.3))
+                    .frame(width: 40, height: 40)
+                
+                Text(achievement.icon)
+                    .font(.system(size: 20))
+                    .opacity(achievement.isEarned ? 1.0 : 0.5)
+            }
             
-            Text(achievement.title)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(achievement.isEarned ? .white : .textPrimary)
-                .multilineTextAlignment(.center)
+            VStack(spacing: 2) {
+                Text(achievement.title)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(Color("TextPrimary"))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                
+                if !achievement.isEarned {
+                    Text("\(achievement.currentValue)/\(achievement.targetValue)")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(Color("TextSecondary"))
+                }
+            }
+            
+            // Progress bar for unearned achievements
+            if !achievement.isEarned {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color.gray.opacity(0.2))
+                            .frame(height: 4)
+                        
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color("PrimaryOrange"))
+                            .frame(width: geometry.size.width * achievement.progressPercentage, height: 4)
+                            .animation(.easeInOut(duration: 0.3), value: achievement.progressPercentage)
+                    }
+                }
+                .frame(height: 4)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(16)
-        .background(
-            achievement.isEarned ?
-            LinearGradient(
-                colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ) :
-            LinearGradient(
-                colors: [.white, .white],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color.white)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(achievement.isEarned ? .primaryOrange : .gray.opacity(0.2), lineWidth: 2)
+                .stroke(achievement.isEarned ? Color("PrimaryOrange") : Color.gray.opacity(0.2), lineWidth: 2)
         )
+        .scaleEffect(achievement.isEarned ? 1.0 : 0.95)
+        .animation(.easeInOut(duration: 0.2), value: achievement.isEarned)
     }
 }
 
