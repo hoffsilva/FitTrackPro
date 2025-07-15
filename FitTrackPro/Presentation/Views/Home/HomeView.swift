@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    @StateObject private var viewModel = HomeViewModel()
+    @StateObject private var workoutViewModel = WorkoutViewModel()
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -9,42 +12,75 @@ struct HomeView: View {
                     HomeHeaderView()
                     
                     // Stats Grid
-                    StatsGridView()
+                    StatsGridView(viewModel: viewModel)
                     
                     // Quick Actions
-                    QuickActionsView()
+                    QuickActionsView(workoutViewModel: workoutViewModel)
                     
                     // Recommended Exercises
-                    RecommendedSectionView()
+                    RecommendedSectionView(viewModel: viewModel)
                 }
                 .padding(.horizontal, 16)
             }
-            .background(Color("BackgroundPrimary"))
+            .background(.backgroundPrimary)
             .navigationBarHidden(true)
+            .onAppear {
+                Task {
+                    await viewModel.loadRecommendedExercises()
+                }
+            }
+        }
+        .sheet(isPresented: $workoutViewModel.isCreatingWorkout) {
+            WorkoutCreationView(workoutViewModel: workoutViewModel)
+        }
+        .fullScreenCover(isPresented: $workoutViewModel.isShowingActiveWorkout) {
+            ActiveWorkoutView(workoutViewModel: workoutViewModel)
         }
     }
 }
 
 struct HomeHeaderView: View {
+    private var greeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 5..<12:
+            return "Good morning"
+        case 12..<17:
+            return "Good afternoon"
+        case 17..<22:
+            return "Good evening"
+        default:
+            return "Good night"
+        }
+    }
+    
+    private var currentDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMMM d"
+        return formatter.string(from: Date())
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Good morning, Hoff!")
+                    Text("\(greeting), Hoff!")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(Color("TextPrimary"))
+                        .foregroundColor(.textPrimary)
                     
-                    Text("Tuesday, July 13")
+                    Text(currentDate)
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(Color("TextSecondary"))
+                        .foregroundColor(.textSecondary)
                 }
                 
                 Spacer()
                 
-                Button(action: {}) {
+                Button(action: {
+                    // TODO: Implement notifications
+                }) {
                     Image(systemName: "bell")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(Color("TextSecondary"))
+                        .foregroundColor(.textSecondary)
                 }
             }
         }
@@ -53,28 +89,61 @@ struct HomeHeaderView: View {
 }
 
 struct StatsGridView: View {
+    @ObservedObject var viewModel: HomeViewModel
+    
     var body: some View {
-        HStack(spacing: 12) {
-            StatCardView(
-                value: "1,247",
-                label: "Calories burned",
-                gradient: LinearGradient(
-                    colors: [Color("PrimaryOrange"), Color("PrimaryOrange").opacity(0.8)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                StatCardView(
+                    value: formatNumber(viewModel.todayCalories),
+                    label: "Calories burned",
+                    gradient: LinearGradient(
+                        colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
-            )
+                
+                StatCardView(
+                    value: formatNumber(viewModel.todaySteps),
+                    label: "Steps today",
+                    gradient: LinearGradient(
+                        colors: [.primaryBlue, .primaryBlue.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            }
             
-            StatCardView(
-                value: "8,432",
-                label: "Steps today",
-                gradient: LinearGradient(
-                    colors: [Color("PrimaryBlue"), Color("PrimaryBlue").opacity(0.8)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+            HStack(spacing: 12) {
+                StatCardView(
+                    value: "\(viewModel.weeklyWorkouts)",
+                    label: "Workouts this week",
+                    gradient: LinearGradient(
+                        colors: [.green, .green.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
-            )
+                
+                StatCardView(
+                    value: "\(viewModel.currentStreak)",
+                    label: "Day streak",
+                    gradient: LinearGradient(
+                        colors: [.purple, .purple.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            }
         }
+    }
+    
+    private func formatNumber(_ number: Int) -> String {
+        if number >= 1000 {
+            return String(format: "%.1fk", Double(number) / 1000.0)
+        }
+        return "\(number)"
     }
 }
 
@@ -102,25 +171,21 @@ struct StatCardView: View {
 }
 
 struct QuickActionsView: View {
+    @ObservedObject var workoutViewModel: WorkoutViewModel
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Quick Actions")
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
-            HStack(spacing: 12) {
-                QuickActionButton(
-                    icon: "figure.run",
-                    title: "Start Workout",
-                    action: {}
-                )
-                
-                QuickActionButton(
-                    icon: "chart.bar",
-                    title: "View Progress",
-                    action: {}
-                )
-            }
+            QuickActionButton(
+                icon: "play.fill",
+                title: workoutViewModel.hasActiveWorkout ? "Continue Workout" : "Start Workout",
+                action: {
+                    workoutViewModel.startWorkout()
+                }
+            )
         }
     }
 }
@@ -135,21 +200,21 @@ struct QuickActionButton: View {
             VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                 
                 Text(title)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
             .padding(.horizontal, 16)
-            .background(Color.white)
+            .background(.white)
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                    .stroke(.gray.opacity(0.2), lineWidth: 2)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -157,59 +222,89 @@ struct QuickActionButton: View {
 }
 
 struct RecommendedSectionView: View {
+    @ObservedObject var viewModel: HomeViewModel
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Recommended for You")
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(Color("TextPrimary"))
+                .foregroundColor(.textPrimary)
             
-            RecommendedExerciseCard(
-                icon: "💪",
-                title: "Upper Body Strength",
-                subtitle: "30 min • Intermediate"
-            )
+            if viewModel.isLoadingRecommended {
+                LoadingView()
+            } else if let errorMessage = viewModel.errorMessage {
+                ErrorView(message: errorMessage) {
+                    Task {
+                        await viewModel.loadRecommendedExercises()
+                    }
+                }
+            } else if viewModel.recommendedExercises.isEmpty {
+                EmptyStateView()
+            } else {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: 12) {
+                    ForEach(viewModel.recommendedExercises.prefix(4), id: \.id) { exercise in
+                        NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
+                            RecommendedExerciseCard(exercise: exercise)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+            }
         }
     }
 }
 
 struct RecommendedExerciseCard: View {
-    let icon: String
-    let title: String
-    let subtitle: String
+    let exercise: Exercise
     
     var body: some View {
-        HStack(spacing: 16) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(LinearGradient(
-                        colors: [Color("PrimaryPurple"), Color("PrimaryPurple").opacity(0.8)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ))
-                    .frame(width: 50, height: 50)
-                
-                Text(icon)
-                    .font(.system(size: 20))
-            }
+        VStack(spacing: 12) {
+            // Exercise GIF
+            GifImageView(
+                url: GifURLBuilder.buildURL(for: exercise.id, resolution: .medium),
+                width: nil,
+                height: 100,
+                cornerRadius: 8
+            )
+            .background(.white)
+            .cornerRadius(8)
             
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(Color("TextPrimary"))
+            VStack(alignment: .leading, spacing: 6) {
+                Text(exercise.name.capitalized)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.textPrimary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text(subtitle)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("TextSecondary"))
+                HStack(spacing: 4) {
+                    Text(exercise.bodyPart.displayName)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.primaryOrange)
+                        .cornerRadius(4)
+                    
+                    Spacer()
+                }
+                
+                Text(exercise.equipment.capitalized)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.textSecondary)
+                    .lineLimit(1)
             }
-            
-            Spacer()
+            .padding(.horizontal, 8)
+            .padding(.bottom, 8)
         }
-        .padding(16)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(.gray.opacity(0.2), lineWidth: 1)
         )
     }
 }

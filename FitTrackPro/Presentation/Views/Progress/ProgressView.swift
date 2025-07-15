@@ -87,7 +87,7 @@ struct ProgressView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .background(Color("BackgroundPrimary"))
+            .background(.backgroundPrimary)
             .navigationBarHidden(true)
             .refreshable {
                 await viewModel.refreshData()
@@ -144,7 +144,7 @@ struct WeeklyChartView: View {
             HStack {
                 Text("Weekly Activity")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                 
                 Spacer()
                 
@@ -219,11 +219,11 @@ struct WeeklyChartView: View {
             }
         }
         .padding(20)
-        .background(Color.white)
+        .background(.white)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 2)
+                .stroke(.gray.opacity(0.2), lineWidth: 2)
         )
     }
 }

@@ -4,10 +4,11 @@ import Combine
 @MainActor
 class ExerciseLibraryViewModel: ObservableObject {
     @Published var exercises: [Exercise] = []
-    @Published var bodyParts: [String] = []
-    @Published var selectedBodyPart: String = "all"
+    @Published var bodyParts: [BodyPart] = []
+    @Published var selectedBodyPart: BodyPart = .all
     @Published var searchText: String = ""
     @Published var isLoading: Bool = false
+    @Published var isSearching: Bool = false
     @Published var errorMessage: String? = nil
     
     private let exerciseService: ExerciseServiceProtocol
@@ -29,8 +30,14 @@ class ExerciseLibraryViewModel: ObservableObject {
     func loadBodyParts() async {
         do {
             let bodyPartsList = try await exerciseService.getBodyPartList()
-            var allBodyParts = ["all"]
-            allBodyParts.append(contentsOf: bodyPartsList.sorted())
+            var allBodyParts: [BodyPart] = [.all]
+            
+            // Convert string body parts to enum and filter valid ones
+            let validBodyParts = bodyPartsList.compactMap { BodyPart(rawValue: $0) }
+                .filter { $0 != .all }
+                .sorted { $0.displayName < $1.displayName }
+            
+            allBodyParts.append(contentsOf: validBodyParts)
             self.bodyParts = allBodyParts
         } catch {
             self.errorMessage = "Failed to load body parts: \(error.localizedDescription)"
@@ -53,25 +60,27 @@ class ExerciseLibraryViewModel: ObservableObject {
     func loadExercises() async {
         do {
             isLoading = true
+            isSearching = !searchText.isEmpty
             errorMessage = nil
             
-            let parameters = PaginationParameters(limit: 100, offset: 0)
+            let parameters = PaginationParameters(limit: 200, offset: 0)
             var exercisesList: [Exercise]
             
-            // Load exercises based on selected body part
-            if selectedBodyPart == "all" {
-                exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
-            } else {
-                exercisesList = try await exerciseService.getExercisesByBodyPart(selectedBodyPart, parameters: parameters)
-            }
-            
-            // Apply search filter
+            // If searching, always load all exercises and filter by search term
             if !searchText.isEmpty {
+                exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
                 exercisesList = exercisesList.filter { exercise in
                     exercise.name.localizedCaseInsensitiveContains(searchText) ||
-                    exercise.bodyPart.localizedCaseInsensitiveContains(searchText) ||
+                    exercise.bodyPart.rawValue.localizedCaseInsensitiveContains(searchText) ||
                     exercise.target.localizedCaseInsensitiveContains(searchText) ||
                     exercise.equipment.localizedCaseInsensitiveContains(searchText)
+                }
+            } else {
+                // When not searching, filter by selected body part
+                if selectedBodyPart == .all {
+                    exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
+                } else {
+                    exercisesList = try await exerciseService.getExercisesByBodyPart(selectedBodyPart.rawValue, parameters: parameters)
                 }
             }
             
@@ -83,10 +92,13 @@ class ExerciseLibraryViewModel: ObservableObject {
         }
         
         isLoading = false
+        isSearching = false
     }
     
-    func selectBodyPart(_ bodyPart: String) {
+    func selectBodyPart(_ bodyPart: BodyPart) {
         selectedBodyPart = bodyPart
+        // Clear search when selecting a category
+        searchText = ""
         Task {
             await loadExercises()
         }

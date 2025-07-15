@@ -8,16 +8,16 @@ struct ErrorView: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 48, weight: .medium))
-                .foregroundColor(Color("PrimaryOrange"))
+                .foregroundColor(.primaryOrange)
             
             VStack(spacing: 8) {
                 Text("Oops! Something went wrong")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(Color("TextPrimary"))
+                    .foregroundColor(.textPrimary)
                 
                 Text(message)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("TextSecondary"))
+                    .foregroundColor(.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
             }
@@ -28,7 +28,7 @@ struct ErrorView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
-                    .background(Color("PrimaryOrange"))
+                    .background(.primaryOrange)
                     .cornerRadius(8)
             }
         }
