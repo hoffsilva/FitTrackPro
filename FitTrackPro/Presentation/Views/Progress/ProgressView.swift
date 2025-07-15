@@ -1,33 +1,5 @@
 import SwiftUI
 
-struct ActivityIndicator: View {
-    @State private var isAnimating = false
-    
-    var body: some View {
-        Circle()
-            .trim(from: 0, to: 0.8)
-            .stroke(
-                Color("PrimaryOrange"),
-                style: StrokeStyle(
-                    lineWidth: 3,
-                    lineCap: .round
-                )
-            )
-            .frame(width: 24, height: 24)
-            .rotationEffect(.degrees(isAnimating ? 360 : 0))
-            .animation(
-                Animation.linear(duration: 1.0)
-                    .repeatForever(autoreverses: false),
-                value: isAnimating
-            )
-            .onAppear {
-                isAnimating = true
-            }
-            .onDisappear {
-                isAnimating = false
-            }
-    }
-}
 
 struct CircularProgressView: View {
     let progress: Double
@@ -119,7 +91,7 @@ struct ProgressHeaderView: View {
             Spacer()
             
             if viewModel.isLoading {
-                ActivityIndicator()
+                LoadingView()
             } else {
                 Button(action: {
                     Task {
@@ -303,12 +275,7 @@ struct AchievementsView: View {
             }
             
             if viewModel.isLoading {
-                HStack {
-                    Spacer()
-                    ActivityIndicator()
-                    Spacer()
-                }
-                .padding(.vertical, 40)
+                LoadingView()
             } else {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
