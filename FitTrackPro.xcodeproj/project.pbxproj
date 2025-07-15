@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		436D83A32E244E460025B483 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 436D83A22E244E460025B483 /* Alamofire */; };
+		436D83B92E2471330025B483 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 436D83B82E2471330025B483 /* SDWebImageSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		43D40C9B2E2446AF0087C24E /* FitTrackPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitTrackPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				436D83B92E2471330025B483 /* SDWebImageSwiftUI in Frameworks */,
+				436D83A32E244E460025B483 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = FitTrackPro;
 			packageProductDependencies = (
+				436D83A22E244E460025B483 /* Alamofire */,
+				436D83B82E2471330025B483 /* SDWebImageSwiftUI */,
 			);
 			productName = FitTrackPro;
 			productReference = 43D40C9B2E2446AF0087C24E /* FitTrackPro.app */;
@@ -94,6 +103,10 @@
 			);
 			mainGroup = 43D40C922E2446AF0087C24E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				436D83A12E244E460025B483 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				436D83B72E2471330025B483 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 43D40C9C2E2446AF0087C24E /* Products */;
 			projectDirPath = "";
@@ -332,6 +345,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		436D83A12E244E460025B483 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		436D83B72E2471330025B483 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		436D83A22E244E460025B483 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 436D83A12E244E460025B483 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		436D83B82E2471330025B483 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 436D83B72E2471330025B483 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 43D40C932E2446AF0087C24E /* Project object */;
 }
