@@ -1,7 +1,6 @@
 import Foundation
 import SwiftData
 
-@MainActor
 class RepositoryManager: ObservableObject {
     static let shared = RepositoryManager()
     
@@ -13,53 +12,54 @@ class RepositoryManager: ObservableObject {
         self.workoutRepository = InMemoryWorkoutRepository()
         
         // Add some sample data for development
-        addSampleData()
+        Task { @MainActor in
+            await addSampleData()
+        }
     }
     
     func setupSwiftData(modelContext: ModelContext) {
         self.workoutRepository = SwiftDataWorkoutRepository(modelContext: modelContext)
     }
     
-    private func addSampleData() {
-        Task {
-            do {
-                // Add some sample completed workouts for testing
-                let calendar = Calendar.current
-                let today = Date()
+    @MainActor
+    private func addSampleData() async {
+        do {
+            // Add some sample completed workouts for testing
+            let calendar = Calendar.current
+            let today = Date()
+            
+            // Add workouts for the past few days
+            for i in 0..<5 {
+                guard let date = calendar.date(byAdding: .day, value: -i, to: today) else { continue }
                 
-                // Add workouts for the past few days
-                for i in 0..<5 {
-                    guard let date = calendar.date(byAdding: .day, value: -i, to: today) else { continue }
-                    
-                    let workout = Workout(
-                        id: UUID().uuidString,
-                        name: "Sample Workout \(i + 1)",
-                        exercises: [],
-                        scheduledDays: [WeekDay.today],
-                        createdAt: date,
-                        duration: TimeInterval(Int.random(in: 1800...3600)), // 30-60 minutes
-                        isCompleted: true
-                    )
-                    
-                    try await workoutRepository.saveWorkout(workout)
-                }
-                
-                // Add a workout for today
-                let todayWorkout = Workout(
+                let workout = Workout(
                     id: UUID().uuidString,
-                    name: "Today's Workout",
+                    name: "Sample Workout \(i + 1)",
                     exercises: [],
                     scheduledDays: [WeekDay.today],
-                    createdAt: today,
-                    duration: TimeInterval(2400), // 40 minutes
+                    createdAt: date,
+                    duration: TimeInterval(Int.random(in: 1800...3600)), // 30-60 minutes
                     isCompleted: true
                 )
                 
-                try await workoutRepository.saveWorkout(todayWorkout)
-                
-            } catch {
-                print("Failed to add sample data: \(error)")
+                try await workoutRepository.saveWorkout(workout)
             }
+            
+            // Add a workout for today
+            let todayWorkout = Workout(
+                id: UUID().uuidString,
+                name: "Today's Workout",
+                exercises: [],
+                scheduledDays: [WeekDay.today],
+                createdAt: today,
+                duration: TimeInterval(2400), // 40 minutes
+                isCompleted: true
+            )
+            
+            try await workoutRepository.saveWorkout(todayWorkout)
+                
+        } catch {
+            print("Failed to add sample data: \(error)")
         }
     }
 }
