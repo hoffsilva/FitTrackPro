@@ -7,9 +7,9 @@ struct ExerciseLibraryView: View {
         NavigationView {
             VStack(spacing: 0) {
                 // Header
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
                     Text("Exercise Library")
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.system(size: DesignTokens.Typography.hero, weight: DesignTokens.Typography.Weight.bold))
                         .foregroundColor(.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -21,35 +21,37 @@ struct ExerciseLibraryView: View {
                         CategoryTabsView(viewModel: viewModel)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 20)
+                .sectionPadding()
+                .padding(.top, DesignTokens.Spacing.xl)
                 
                 // Exercise List
                 ScrollView {
-                    LazyVStack(spacing: 12) {
-                        if viewModel.isLoading {
-                            LoadingView()
-                        } else if let errorMessage = viewModel.errorMessage {
-                            ErrorView(message: errorMessage) {
-                                Task {
-                                    await viewModel.loadExercises()
-                                }
+                    AsyncContentView(
+                        isLoading: viewModel.isLoading,
+                        errorMessage: viewModel.errorMessage,
+                        isEmpty: viewModel.exercises.isEmpty,
+                        retryAction: {
+                            Task {
+                                await viewModel.loadExercises()
                             }
-                        } else {
+                        },
+                        loadingText: "Loading exercises...",
+                        loadingSubtext: "Please wait a moment",
+                        emptyTitle: viewModel.isSearching ? "No results for '\(viewModel.searchText)'" : "No exercises found",
+                        emptyMessage: viewModel.isSearching ? "Try searching for a different exercise" : "Try selecting a different category",
+                        emptyIcon: viewModel.isSearching ? "magnifyingglass" : "dumbbell"
+                    ) {
+                        LazyVStack(spacing: DesignTokens.Spacing.md) {
                             ForEach(viewModel.exercises, id: \.id) { exercise in
                                 NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                                     ExerciseRowView(exercise: exercise)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            
-                            if viewModel.exercises.isEmpty {
-                                EmptyStateView(isSearching: viewModel.isSearching, searchText: viewModel.searchText)
-                            }
                         }
+                        .sectionPadding()
+                        .padding(.top, DesignTokens.Spacing.xl)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 20)
                 }
             }
             .background(.backgroundPrimary)

@@ -1,10 +1,10 @@
 # FitTrackPro
 
-An iOS fitness tracking application developed in SwiftUI following Clean Architecture principles.
+A comprehensive iOS fitness tracking application built with SwiftUI and Clean Architecture, featuring exercise library, workout planning, and progress tracking.
 
 ## 📱 About the Project
 
-FitTrackPro is a fitness application that allows users to monitor their physical activities, workouts, and progress in an intuitive and efficient way.
+FitTrackPro is a modern fitness application that provides users with a complete workout experience. From browsing over 1000+ exercises with animated GIF demonstrations to tracking weekly progress and creating custom workouts, the app delivers an intuitive and engaging fitness journey.
 
 ## 🏗️ Architecture
 
@@ -36,11 +36,15 @@ FitTrackPro/
 ## 🛠️ Technologies
 
 - **Swift** - Programming language
-- **SwiftUI** - UI framework
-- **Alamofire** - HTTP networking client
-- **SDWebImageSwiftUI** - Animated GIF and image loading
-- **Clean Architecture** - Architectural pattern
-- **MVVM** - Presentation pattern
+- **SwiftUI** - UI framework with NavigationView, ScrollView, LazyVGrid
+- **Alamofire** - HTTP networking client for API communication
+- **SDWebImageSwiftUI** - Animated GIF and image loading with caching
+- **SwiftData** - Modern data persistence framework
+- **Combine** - Reactive programming for ViewModels
+- **Clean Architecture** - Architectural pattern with clear separation of concerns
+- **MVVM** - Presentation pattern with ObservableObject ViewModels
+- **Repository Pattern** - Data access abstraction layer
+- **Dependency Injection** - For testable and modular code
 
 ## 🔧 API
 
@@ -84,13 +88,53 @@ open FitTrackPro.xcodeproj
 
 4. Run the project on simulator or physical device
 
+## 🚀 Current Features
+
+### 🏠 Home Screen
+- **Dynamic greeting** based on time of day
+- **Real-time statistics** with calories, steps, workouts, and streak tracking
+- **Recommended exercises** from multiple body parts with animated GIFs
+- **Quick workout actions** to start or continue workouts
+- **Responsive UI** with gradient stat cards and loading states
+
+### 💪 Exercise Library
+- **Comprehensive exercise database** with 1000+ exercises
+- **Advanced search functionality** with debounced input
+- **Category filtering** by body parts (All, Back, Chest, Arms, Legs, etc.)
+- **Animated GIF demonstrations** with multiple resolutions
+- **Exercise details** with step-by-step instructions and muscle targets
+- **Navigation integration** with detailed exercise views
+
+### 📊 Progress Tracking
+- **Weekly activity charts** with interactive navigation between weeks
+- **Dynamic statistics** showing total workouts, calories, and streaks
+- **Achievement system** with progress bars and earned badges
+- **Real-time progress updates** with pull-to-refresh functionality
+- **Custom loading animations** throughout the interface
+
+### 🏋️‍♂️ Workout System
+- **Workout creation** with exercise selection and scheduling
+- **Day-based workout planning** with visual day selection
+- **Active workout tracking** with timer and set completion
+- **Repository pattern** with SwiftData integration for persistence
+- **In-memory fallback** for development and testing
+
+### 🎨 UI/UX Features
+- **Custom loading indicators** with consistent circular animations
+- **Navigation bar loading states** for seamless user experience
+- **Error handling** with retry functionality
+- **Empty states** with contextual messaging
+- **Responsive design** with proper spacing and typography
+- **Color system** with branded orange, blue, and purple themes
+
 ## 📋 Planned Features
 
-- [ ] Exercise tracking
-- [ ] Workout history
-- [ ] Progress metrics
-- [ ] Personal goals
-- [ ] User profile
+- [ ] Workout history and analytics
+- [ ] Personal goals and milestones
+- [ ] Social features and sharing
+- [ ] Nutrition tracking integration
+- [ ] Wearable device synchronization
+- [ ] Offline mode support
 
 ## 🤝 Contributing
 
