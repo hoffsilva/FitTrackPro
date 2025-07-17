@@ -39,9 +39,6 @@ class HomeViewModel: ObservableObject {
             isLoadingRecommended = true
             errorMessage = nil
             
-            // Get a mix of different body parts for recommendations
-            let parameters = PaginationParameters(limit: 10, offset: 0)
-            
             // Get exercises from different categories for variety
             async let chestExercises = exerciseService.getExercisesByBodyPart("chest", parameters: PaginationParameters(limit: 3, offset: 0))
             async let backExercises = exerciseService.getExercisesByBodyPart("back", parameters: PaginationParameters(limit: 3, offset: 0))

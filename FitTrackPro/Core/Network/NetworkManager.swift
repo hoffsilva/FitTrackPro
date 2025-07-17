@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 
 protocol NetworkManagerProtocol {
-    func request<T: Codable>(_ endpoint: APIEndpoint, responseType: T.Type) async throws -> T
+    func request<T: Codable>(_ endpoint: APIEndpoint) async throws -> T
 }
 
 class NetworkManager: NetworkManagerProtocol {
@@ -18,7 +18,7 @@ class NetworkManager: NetworkManagerProtocol {
         self.session = Session(configuration: configuration)
     }
     
-    func request<T: Codable>(_ endpoint: APIEndpoint, responseType: T.Type) async throws -> T {
+    func request<T: Codable>(_ endpoint: APIEndpoint) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
             session.request(
                 endpoint.url,

@@ -91,7 +91,7 @@ struct ProgressHeaderView: View {
             Spacer()
             
             if viewModel.isLoading {
-                LoadingView()
+                NavigationBarLoadingView(size: 20)
             } else {
                 Button(action: {
                     Task {
@@ -275,7 +275,7 @@ struct AchievementsView: View {
             }
             
             if viewModel.isLoading {
-                LoadingView()
+                LoadingView(primaryText: "Loading progress...", secondaryText: "Updating your stats")
             } else {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
