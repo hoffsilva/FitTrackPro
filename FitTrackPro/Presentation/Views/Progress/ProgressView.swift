@@ -1,4 +1,5 @@
 import SwiftUI
+import Resolver
 
 
 struct CircularProgressView: View {
@@ -39,12 +40,7 @@ struct CircularProgressView: View {
 }
 
 struct ProgressView: View {
-    @StateObject private var viewModel: ProgressViewModel
-    
-    init() {
-        let manager = RepositoryManager.shared
-        self._viewModel = StateObject(wrappedValue: ProgressViewModel(workoutRepository: manager.workoutRepository))
-    }
+    @StateObject private var viewModel = Resolver.resolve(ProgressViewModel.self)
     
     var body: some View {
         NavigationView {

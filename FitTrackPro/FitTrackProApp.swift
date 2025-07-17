@@ -6,9 +6,21 @@
 //
 
 import SwiftUI
+import Resolver
 
 @main
 struct FitTrackProApp: App {
+    
+    init() {
+        // Configure dependency injection
+        Resolver.registerAllServices()
+        
+        // Add development data for testing
+        #if DEBUG
+        Resolver.addDevelopmentData()
+        #endif
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

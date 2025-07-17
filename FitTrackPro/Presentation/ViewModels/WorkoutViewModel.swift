@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Resolver
 
 @MainActor
 class WorkoutViewModel: ObservableObject {
@@ -8,11 +9,17 @@ class WorkoutViewModel: ObservableObject {
     @Published var isShowingActiveWorkout: Bool = false
     @Published var hasActiveWorkout: Bool = false
     
-    private let workoutRepository: WorkoutRepositoryProtocol
+    @Injected private var workoutRepository: WorkoutRepositoryProtocol
     
-    init(workoutRepository: WorkoutRepositoryProtocol? = nil) {
-        // Use RepositoryManager by default or provided repository
-        self.workoutRepository = workoutRepository ?? RepositoryManager.shared.workoutRepository
+    init() {
+        Task {
+            await checkForActiveWorkout()
+        }
+    }
+    
+    // Legacy init for backward compatibility
+    init(workoutRepository: WorkoutRepositoryProtocol) {
+        self.workoutRepository = workoutRepository
         Task {
             await checkForActiveWorkout()
         }

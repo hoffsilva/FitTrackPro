@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Resolver
 
 @MainActor
 class ProgressViewModel: ObservableObject {
@@ -11,8 +12,15 @@ class ProgressViewModel: ObservableObject {
     @Published var selectedWeekOffset: Int = 0 // 0 = current week, -1 = last week, etc.
     
     private var cancellables = Set<AnyCancellable>()
-    private let workoutRepository: WorkoutRepositoryProtocol
+    @Injected private var workoutRepository: WorkoutRepositoryProtocol
     
+    init() {
+        loadProgressData()
+        setupWeeklyData()
+        setupAchievements()
+    }
+    
+    // Legacy init for backward compatibility
     init(workoutRepository: WorkoutRepositoryProtocol) {
         self.workoutRepository = workoutRepository
         loadProgressData()

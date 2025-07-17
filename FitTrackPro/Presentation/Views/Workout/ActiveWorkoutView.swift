@@ -1,4 +1,5 @@
 import SwiftUI
+import Resolver
 
 struct ActiveWorkoutView: View {
     @ObservedObject var workoutViewModel: WorkoutViewModel
@@ -369,5 +370,5 @@ struct WorkoutCompletedView: View {
 }
 
 #Preview {
-    ActiveWorkoutView(workoutViewModel: WorkoutViewModel())
+    ActiveWorkoutView(workoutViewModel: Resolver.resolve(WorkoutViewModel.self))
 }

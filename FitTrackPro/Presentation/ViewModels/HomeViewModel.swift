@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Resolver
 
 @MainActor
 class HomeViewModel: ObservableObject {
@@ -13,11 +14,16 @@ class HomeViewModel: ObservableObject {
     @Published var weeklyWorkouts: Int = 0
     @Published var currentStreak: Int = 0
     
-    private let exerciseService: ExerciseServiceProtocol
+    @Injected private var exerciseService: ExerciseServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     
-    init(exerciseService: ExerciseServiceProtocol? = nil) {
-        self.exerciseService = exerciseService ?? ExerciseService()
+    init() {
+        loadDailyStats()
+    }
+    
+    // Legacy init for backward compatibility
+    init(exerciseService: ExerciseServiceProtocol) {
+        self.exerciseService = exerciseService
         loadDailyStats()
     }
     
