@@ -39,7 +39,13 @@ struct CircularProgressView: View {
 }
 
 struct ProgressView: View {
-    @StateObject private var viewModel = ProgressViewModel()
+    @StateObject private var repositoryManager = RepositoryManager.shared
+    @StateObject private var viewModel: ProgressViewModel
+    
+    init() {
+        let manager = RepositoryManager.shared
+        self._viewModel = StateObject(wrappedValue: ProgressViewModel(workoutRepository: manager.workoutRepository))
+    }
     
     var body: some View {
         NavigationView {

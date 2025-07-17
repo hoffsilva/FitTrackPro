@@ -112,6 +112,88 @@ class SwiftDataWorkoutRepository: WorkoutRepositoryProtocol {
         
         try modelContext.save()
     }
+    
+    // MARK: - Progress tracking methods
+    
+    func getCompletedWorkouts() async throws -> [Workout] {
+        let descriptor = FetchDescriptor<WorkoutDataModel>(
+            predicate: #Predicate { $0.isCompleted == true },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        let workoutDataModels = try modelContext.fetch(descriptor)
+        return workoutDataModels.map { $0.toDomain() }
+    }
+    
+    func getWorkoutsForDateRange(startDate: Date, endDate: Date) async throws -> [Workout] {
+        let descriptor = FetchDescriptor<WorkoutDataModel>(
+            predicate: #Predicate { workout in
+                workout.isCompleted && 
+                workout.createdAt >= startDate && 
+                workout.createdAt <= endDate
+            },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        let workoutDataModels = try modelContext.fetch(descriptor)
+        return workoutDataModels.map { $0.toDomain() }
+    }
+    
+    func getWorkoutsForWeek(weekOffset: Int) async throws -> [Workout] {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        guard let weekStart = calendar.date(byAdding: .weekOfYear, value: weekOffset, to: today),
+              let weekInterval = calendar.dateInterval(of: .weekOfYear, for: weekStart) else {
+            return []
+        }
+        
+        return try await getWorkoutsForDateRange(
+            startDate: weekInterval.start,
+            endDate: weekInterval.end
+        )
+    }
+    
+    func getWorkoutStreak() async throws -> Int {
+        let completedWorkouts = try await getCompletedWorkouts()
+        
+        guard !completedWorkouts.isEmpty else { return 0 }
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        var currentStreak = 0
+        var currentDate = today
+        
+        // Group workouts by date
+        let workoutsByDate = Dictionary(grouping: completedWorkouts) { workout in
+            calendar.startOfDay(for: workout.createdAt)
+        }
+        
+        // Check consecutive days starting from today
+        while let _ = workoutsByDate[currentDate] {
+            currentStreak += 1
+            guard let previousDay = calendar.date(byAdding: .day, value: -1, to: currentDate) else {
+                break
+            }
+            currentDate = previousDay
+        }
+        
+        // If no workout today, check if there was one yesterday to continue streak
+        if currentStreak == 0,
+           let yesterday = calendar.date(byAdding: .day, value: -1, to: today),
+           workoutsByDate[yesterday] != nil {
+            currentStreak = 1
+            currentDate = calendar.date(byAdding: .day, value: -2, to: today) ?? yesterday
+            
+            while let _ = workoutsByDate[currentDate] {
+                currentStreak += 1
+                guard let previousDay = calendar.date(byAdding: .day, value: -1, to: currentDate) else {
+                    break
+                }
+                currentDate = previousDay
+            }
+        }
+        
+        return currentStreak
+    }
 }
 
 enum WorkoutRepositoryError: Error, LocalizedError {

@@ -21,7 +21,7 @@ struct ActiveWorkoutView: View {
                 ActiveWorkoutHeader(
                     workoutName: workoutViewModel.currentWorkout?.name ?? "",
                     elapsedTime: elapsedTime,
-                    onFinish: finishWorkout
+                    onFinish: { finishWorkout() }
                 )
                 
                 // Exercise Progress
@@ -45,7 +45,7 @@ struct ActiveWorkoutView: View {
                     WorkoutCompletedView(
                         workoutName: workoutViewModel.currentWorkout?.name ?? "",
                         totalTime: elapsedTime,
-                        onFinish: finishWorkout
+                        onFinish: { finishWorkout() }
                     )
                 }
                 
@@ -96,7 +96,7 @@ struct ActiveWorkoutView: View {
     
     private func finishWorkout() {
         stopTimer()
-        workoutViewModel.finishWorkout()
+        workoutViewModel.finishWorkout(with: elapsedTime)
         presentationMode.wrappedValue.dismiss()
     }
 }

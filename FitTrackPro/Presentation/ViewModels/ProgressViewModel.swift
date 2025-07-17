@@ -11,8 +11,10 @@ class ProgressViewModel: ObservableObject {
     @Published var selectedWeekOffset: Int = 0 // 0 = current week, -1 = last week, etc.
     
     private var cancellables = Set<AnyCancellable>()
+    private let workoutRepository: WorkoutRepositoryProtocol
     
-    init() {
+    init(workoutRepository: WorkoutRepositoryProtocol) {
+        self.workoutRepository = workoutRepository
         loadProgressData()
         setupWeeklyData()
         setupAchievements()
@@ -49,54 +51,92 @@ class ProgressViewModel: ObservableObject {
     }
     
     private func loadWeeklyActivity() async {
-        // Generate mock data for weekly activity
-        let calendar = Calendar.current
-        let today = Date()
-        let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: today)?.start ?? today
-        
-        var activities: [DailyActivity] = []
-        
-        for i in 0..<7 {
-            let date = calendar.date(byAdding: .day, value: i, to: startOfWeek) ?? today
-            let dayName = calendar.shortWeekdaySymbols[calendar.component(.weekday, from: date) - 1]
+        do {
+            // Get workouts for the selected week
+            let weekWorkouts = try await workoutRepository.getWorkoutsForWeek(weekOffset: selectedWeekOffset)
             
-            // Mock data - in real app, this would come from actual workout data
-            let workoutCount = Int.random(in: 0...2)
-            let caloriesBurned = workoutCount > 0 ? Int.random(in: 200...600) : 0
-            let duration = workoutCount > 0 ? Int.random(in: 30...90) : 0
+            let calendar = Calendar.current
+            let today = Date()
             
-            activities.append(DailyActivity(
-                date: date,
-                dayName: dayName,
-                workoutCount: workoutCount,
-                caloriesBurned: caloriesBurned,
-                workoutDuration: duration
-            ))
+            // Calculate the start of the target week
+            guard let targetWeekStart = calendar.date(byAdding: .weekOfYear, value: selectedWeekOffset, to: today),
+                  let weekInterval = calendar.dateInterval(of: .weekOfYear, for: targetWeekStart) else {
+                weeklyActivityData = []
+                return
+            }
+            
+            var activities: [DailyActivity] = []
+            
+            // Create activities for each day of the week
+            for i in 0..<7 {
+                let date = calendar.date(byAdding: .day, value: i, to: weekInterval.start) ?? weekInterval.start
+                let dayName = calendar.shortWeekdaySymbols[calendar.component(.weekday, from: date) - 1]
+                
+                // Filter workouts for this specific day
+                let dayStart = calendar.startOfDay(for: date)
+                let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? date
+                
+                let dayWorkouts = weekWorkouts.filter { workout in
+                    workout.createdAt >= dayStart && workout.createdAt < dayEnd
+                }
+                
+                // Calculate real statistics from actual workouts
+                let workoutCount = dayWorkouts.count
+                let totalDuration = dayWorkouts.compactMap { $0.duration }.reduce(0, +)
+                let caloriesBurned = calculateCaloriesFromWorkouts(dayWorkouts)
+                
+                activities.append(DailyActivity(
+                    date: date,
+                    dayName: dayName,
+                    workoutCount: workoutCount,
+                    caloriesBurned: caloriesBurned,
+                    workoutDuration: Int(totalDuration / 60) // Convert to minutes
+                ))
+            }
+            
+            weeklyActivityData = activities
+        } catch {
+            errorMessage = "Failed to load weekly activity: \(error.localizedDescription)"
+            weeklyActivityData = []
         }
-        
-        weeklyActivityData = activities
     }
     
     private func loadProgressStats() async {
-        // Calculate stats from weekly data
-        let totalWorkouts = weeklyActivityData.reduce(0) { $0 + $1.workoutCount }
-        let totalCalories = weeklyActivityData.reduce(0) { $0 + $1.caloriesBurned }
-        let totalDuration = weeklyActivityData.reduce(0) { $0 + $1.workoutDuration }
-        let averageHoursPerWeek = Double(totalDuration) / 60.0
-        
-        // Mock additional stats
-        let totalWorkoutsAllTime = totalWorkouts + Int.random(in: 50...200)
-        let currentStreak = calculateCurrentStreak()
-        
-        progressStats = ProgressStats(
-            totalWorkouts: totalWorkoutsAllTime,
-            weeklyWorkouts: totalWorkouts,
-            totalCaloriesBurned: totalCalories + Int.random(in: 5000...15000),
-            weeklyCaloriesBurned: totalCalories,
-            averageHoursPerWeek: averageHoursPerWeek,
-            currentStreak: currentStreak,
-            personalBest: max(totalWorkouts, 3)
-        )
+        do {
+            // Get all completed workouts for comprehensive stats
+            let allCompletedWorkouts = try await workoutRepository.getCompletedWorkouts()
+            
+            // Calculate weekly stats from current week data
+            let weeklyWorkouts = weeklyActivityData.reduce(0) { $0 + $1.workoutCount }
+            let weeklyCalories = weeklyActivityData.reduce(0) { $0 + $1.caloriesBurned }
+            let weeklyDuration = weeklyActivityData.reduce(0) { $0 + $1.workoutDuration }
+            
+            // Calculate all-time stats
+            let totalWorkouts = allCompletedWorkouts.count
+            let totalCalories = calculateCaloriesFromWorkouts(allCompletedWorkouts)
+            let totalDurationMinutes = allCompletedWorkouts.compactMap { $0.duration }.reduce(0, +) / 60
+            
+            // Calculate average hours per week based on workout history
+            let averageHoursPerWeek = calculateAverageHoursPerWeek(from: allCompletedWorkouts)
+            
+            // Get real streak data
+            let currentStreak = try await workoutRepository.getWorkoutStreak()
+            
+            // Calculate personal best (max workouts in a week)
+            let personalBest = await calculatePersonalBest()
+            
+            progressStats = ProgressStats(
+                totalWorkouts: totalWorkouts,
+                weeklyWorkouts: weeklyWorkouts,
+                totalCaloriesBurned: totalCalories,
+                weeklyCaloriesBurned: weeklyCalories,
+                averageHoursPerWeek: averageHoursPerWeek,
+                currentStreak: currentStreak,
+                personalBest: personalBest
+            )
+        } catch {
+            errorMessage = "Failed to load progress stats: \(error.localizedDescription)"
+        }
     }
     
     private func updateAchievements() async {
@@ -149,9 +189,57 @@ class ProgressViewModel: ObservableObject {
         achievements = updatedAchievements
     }
     
-    private func calculateCurrentStreak() -> Int {
-        // Mock streak calculation - in real app, this would be based on actual workout dates
-        return Int.random(in: 0...10)
+    // MARK: - Helper Methods
+    
+    private func calculateCaloriesFromWorkouts(_ workouts: [Workout]) -> Int {
+        // Simple calorie calculation based on workout duration and intensity
+        // In a real app, this could be more sophisticated based on exercise types, user weight, etc.
+        return workouts.compactMap { workout in
+            guard let duration = workout.duration else { return nil }
+            let minutes = Int(duration / 60)
+            let caloriesPerMinute = 8 // Average calories burned per minute (can be adjusted)
+            return minutes * caloriesPerMinute
+        }.reduce(0, +)
+    }
+    
+    private func calculateAverageHoursPerWeek(from workouts: [Workout]) -> Double {
+        guard !workouts.isEmpty else { return 0.0 }
+        
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // Group workouts by week
+        let workoutsByWeek = Dictionary(grouping: workouts) { workout in
+            calendar.dateInterval(of: .weekOfYear, for: workout.createdAt)?.start ?? workout.createdAt
+        }
+        
+        // Calculate total hours for each week
+        var weeklyHours: [Double] = []
+        for (_, weekWorkouts) in workoutsByWeek {
+            let totalMinutes = weekWorkouts.compactMap { $0.duration }.reduce(0, +) / 60
+            weeklyHours.append(totalMinutes / 60.0)
+        }
+        
+        // Return average
+        return weeklyHours.isEmpty ? 0.0 : weeklyHours.reduce(0, +) / Double(weeklyHours.count)
+    }
+    
+    private func calculatePersonalBest() async -> Int {
+        do {
+            let allWorkouts = try await workoutRepository.getCompletedWorkouts()
+            let calendar = Calendar.current
+            
+            // Group workouts by week
+            let workoutsByWeek = Dictionary(grouping: allWorkouts) { workout in
+                calendar.dateInterval(of: .weekOfYear, for: workout.createdAt)?.start ?? workout.createdAt
+            }
+            
+            // Find the week with most workouts
+            let maxWorkoutsInWeek = workoutsByWeek.values.map { $0.count }.max() ?? 0
+            return maxWorkoutsInWeek
+        } catch {
+            return 0
+        }
     }
     
     private func setupWeeklyData() {
