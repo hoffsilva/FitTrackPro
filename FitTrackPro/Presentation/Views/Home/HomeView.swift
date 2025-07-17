@@ -42,16 +42,7 @@ struct HomeView: View {
 struct HomeHeaderView: View {
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case 5..<12:
-            return "Good morning"
-        case 12..<17:
-            return "Good afternoon"
-        case 17..<22:
-            return "Good evening"
-        default:
-            return "Good night"
-        }
+        return LocalizedContent.greeting(for: hour)
     }
     
     private var currentDate: String {
@@ -96,7 +87,7 @@ struct StatsGridView: View {
             HStack(spacing: DesignTokens.Spacing.md) {
                 StatsCardComponent(
                     value: formatNumber(viewModel.todayCalories),
-                    label: "Calories burned",
+                    label: LocalizedKeys.Home.Stats.calories.localized,
                     gradient: LinearGradient(
                         colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
                         startPoint: .topLeading,
@@ -107,7 +98,7 @@ struct StatsGridView: View {
                 
                 StatsCardComponent(
                     value: formatNumber(viewModel.todaySteps),
-                    label: "Steps today",
+                    label: LocalizedKeys.Home.Stats.steps.localized,
                     gradient: LinearGradient(
                         colors: [.primaryBlue, .primaryBlue.opacity(0.8)],
                         startPoint: .topLeading,
@@ -120,7 +111,7 @@ struct StatsGridView: View {
             HStack(spacing: DesignTokens.Spacing.md) {
                 StatsCardComponent(
                     value: "\(viewModel.weeklyWorkouts)",
-                    label: "Workouts this week",
+                    label: LocalizedKeys.Home.Stats.workouts.localized,
                     gradient: LinearGradient(
                         colors: [.green, .green.opacity(0.8)],
                         startPoint: .topLeading,
@@ -131,7 +122,7 @@ struct StatsGridView: View {
                 
                 StatsCardComponent(
                     value: "\(viewModel.currentStreak)",
-                    label: "Day streak",
+                    label: LocalizedKeys.Home.Stats.streak.localized,
                     gradient: LinearGradient(
                         colors: [.purple, .purple.opacity(0.8)],
                         startPoint: .topLeading,
@@ -156,14 +147,16 @@ struct QuickActionsView: View {
     @ObservedObject var workoutViewModel: WorkoutViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Quick Actions")
-                .font(.system(size: 20, weight: .bold))
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+            Text(LocalizedKeys.Home.QuickActions.title.localized)
+                .font(.system(size: DesignTokens.Typography.title, weight: DesignTokens.Typography.Weight.bold))
                 .foregroundColor(.textPrimary)
             
             QuickActionButton(
                 icon: "play.fill",
-                title: workoutViewModel.hasActiveWorkout ? "Continue Workout" : "Start Workout",
+                title: workoutViewModel.hasActiveWorkout ? 
+                    LocalizedKeys.Home.QuickActions.continueWorkout.localized : 
+                    LocalizedKeys.Home.QuickActions.startWorkout.localized,
                 action: {
                     workoutViewModel.startWorkout()
                 }
@@ -208,7 +201,7 @@ struct RecommendedSectionView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-            Text("Recommended for You")
+            Text(LocalizedKeys.Home.Recommended.title.localized)
                 .font(.system(size: DesignTokens.Typography.title, weight: DesignTokens.Typography.Weight.bold))
                 .foregroundColor(.textPrimary)
             
@@ -221,10 +214,10 @@ struct RecommendedSectionView: View {
                         await viewModel.loadRecommendedExercises()
                     }
                 },
-                loadingText: "Loading recommendations...",
-                loadingSubtext: "Finding exercises for you",
-                emptyTitle: "No recommendations yet",
-                emptyMessage: "We're working on finding exercises for you",
+                loadingText: LocalizedKeys.Home.Recommended.loading.localized,
+                loadingSubtext: LocalizedKeys.Home.Recommended.loadingSubtitle.localized,
+                emptyTitle: LocalizedKeys.Home.Recommended.emptyTitle.localized,
+                emptyMessage: LocalizedKeys.Home.Recommended.emptyMessage.localized,
                 emptyIcon: "star"
             ) {
                 LazyVGrid(columns: [

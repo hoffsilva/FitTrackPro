@@ -8,7 +8,7 @@ struct ExerciseLibraryView: View {
             VStack(spacing: 0) {
                 // Header
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
-                    Text("Exercise Library")
+                    Text(LocalizedKeys.Exercises.title.localized)
                         .font(.system(size: DesignTokens.Typography.hero, weight: DesignTokens.Typography.Weight.bold))
                         .foregroundColor(.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,10 +35,10 @@ struct ExerciseLibraryView: View {
                                 await viewModel.loadExercises()
                             }
                         },
-                        loadingText: "Loading exercises...",
-                        loadingSubtext: "Please wait a moment",
-                        emptyTitle: viewModel.isSearching ? "No results for '\(viewModel.searchText)'" : "No exercises found",
-                        emptyMessage: viewModel.isSearching ? "Try searching for a different exercise" : "Try selecting a different category",
+                        loadingText: LocalizedKeys.Exercises.loading.localized,
+                        loadingSubtext: LocalizedKeys.Exercises.loadingSubtitle.localized,
+                        emptyTitle: viewModel.isSearching ? LocalizedContent.emptySearchTitle(for: viewModel.searchText) : LocalizedKeys.Exercises.emptyTitle.localized,
+                        emptyMessage: viewModel.isSearching ? LocalizedKeys.Exercises.emptySearchMessage.localized : LocalizedKeys.Exercises.emptyMessage.localized,
                         emptyIcon: viewModel.isSearching ? "magnifyingglass" : "dumbbell"
                     ) {
                         LazyVStack(spacing: DesignTokens.Spacing.md) {
@@ -73,7 +73,7 @@ struct SearchBarView: View {
                 .foregroundColor(.textSecondary)
                 .font(.system(size: 16, weight: .medium))
             
-            TextField("Search exercises...", text: $searchText)
+            TextField(LocalizedKeys.Exercises.searchPlaceholder.localized, text: $searchText)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.textPrimary)
         }
