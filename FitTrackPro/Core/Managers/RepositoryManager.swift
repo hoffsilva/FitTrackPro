@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-class RepositoryManager: ObservableObject {
+class RepositoryManager {
     static let shared = RepositoryManager()
     
     private(set) var workoutRepository: WorkoutRepositoryProtocol

@@ -39,7 +39,6 @@ struct CircularProgressView: View {
 }
 
 struct ProgressView: View {
-    @StateObject private var repositoryManager = RepositoryManager.shared
     @StateObject private var viewModel: ProgressViewModel
     
     init() {

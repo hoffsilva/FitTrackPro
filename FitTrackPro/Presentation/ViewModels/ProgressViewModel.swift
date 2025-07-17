@@ -109,12 +109,10 @@ class ProgressViewModel: ObservableObject {
             // Calculate weekly stats from current week data
             let weeklyWorkouts = weeklyActivityData.reduce(0) { $0 + $1.workoutCount }
             let weeklyCalories = weeklyActivityData.reduce(0) { $0 + $1.caloriesBurned }
-            let weeklyDuration = weeklyActivityData.reduce(0) { $0 + $1.workoutDuration }
             
             // Calculate all-time stats
             let totalWorkouts = allCompletedWorkouts.count
             let totalCalories = calculateCaloriesFromWorkouts(allCompletedWorkouts)
-            let totalDurationMinutes = allCompletedWorkouts.compactMap { $0.duration }.reduce(0, +) / 60
             
             // Calculate average hours per week based on workout history
             let averageHoursPerWeek = calculateAverageHoursPerWeek(from: allCompletedWorkouts)
@@ -206,7 +204,6 @@ class ProgressViewModel: ObservableObject {
         guard !workouts.isEmpty else { return 0.0 }
         
         let calendar = Calendar.current
-        let now = Date()
         
         // Group workouts by week
         let workoutsByWeek = Dictionary(grouping: workouts) { workout in
