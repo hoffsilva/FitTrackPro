@@ -2,7 +2,7 @@ import SwiftUI
 import Resolver
 
 struct ExerciseLibraryView: View {
-    @StateObject private var viewModel = Resolver.resolve(ExerciseLibraryViewModel.self)
+    @StateObject private var viewModel: ExerciseLibraryViewModel = Resolver.resolve()
     
     var body: some View {
         NavigationView {

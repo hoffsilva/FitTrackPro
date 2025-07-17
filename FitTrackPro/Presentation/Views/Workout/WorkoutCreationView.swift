@@ -3,7 +3,7 @@ import Resolver
 
 struct WorkoutCreationView: View {
     @ObservedObject var workoutViewModel: WorkoutViewModel
-    @StateObject private var exerciseViewModel = Resolver.resolve(ExerciseLibraryViewModel.self)
+    @StateObject private var exerciseViewModel: ExerciseLibraryViewModel = Resolver.resolve()
     @State private var workoutName: String = ""
     @State private var selectedDays: [WeekDay] = []
     @State private var selectedExercises: [Exercise] = []
@@ -288,5 +288,5 @@ struct CreateWorkoutButton: View {
 }
 
 #Preview {
-    WorkoutCreationView(workoutViewModel: Resolver.resolve(WorkoutViewModel.self))
+    WorkoutCreationView(workoutViewModel: Resolver.resolve())
 }

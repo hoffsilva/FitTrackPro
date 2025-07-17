@@ -10,7 +10,6 @@
 		436D83A32E244E460025B483 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 436D83A22E244E460025B483 /* Alamofire */; };
 		436D83B92E2471330025B483 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 436D83B82E2471330025B483 /* SDWebImageSwiftUI */; };
 		43F228A12E28A9DB0018D4D1 /* Resolver in Frameworks */ = {isa = PBXBuildFile; productRef = 43F228A02E28A9DB0018D4D1 /* Resolver */; };
-		43F228A32E28A9DB0018D4D1 /* Resolver-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 43F228A22E28A9DB0018D4D1 /* Resolver-Dynamic */; };
 		43F228A52E28A9DB0018D4D1 /* Resolver-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 43F228A42E28A9DB0018D4D1 /* Resolver-Static */; };
 /* End PBXBuildFile section */
 
@@ -31,7 +30,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43F228A32E28A9DB0018D4D1 /* Resolver-Dynamic in Frameworks */,
 				43F228A12E28A9DB0018D4D1 /* Resolver in Frameworks */,
 				436D83B92E2471330025B483 /* SDWebImageSwiftUI in Frameworks */,
 				43F228A52E28A9DB0018D4D1 /* Resolver-Static in Frameworks */,
@@ -81,7 +79,6 @@
 				436D83A22E244E460025B483 /* Alamofire */,
 				436D83B82E2471330025B483 /* SDWebImageSwiftUI */,
 				43F228A02E28A9DB0018D4D1 /* Resolver */,
-				43F228A22E28A9DB0018D4D1 /* Resolver-Dynamic */,
 				43F228A42E28A9DB0018D4D1 /* Resolver-Static */,
 			);
 			productName = FitTrackPro;
@@ -398,11 +395,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 43F2289F2E28A9DB0018D4D1 /* XCRemoteSwiftPackageReference "Resolver" */;
 			productName = Resolver;
-		};
-		43F228A22E28A9DB0018D4D1 /* Resolver-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 43F2289F2E28A9DB0018D4D1 /* XCRemoteSwiftPackageReference "Resolver" */;
-			productName = "Resolver-Dynamic";
 		};
 		43F228A42E28A9DB0018D4D1 /* Resolver-Static */ = {
 			isa = XCSwiftPackageProductDependency;

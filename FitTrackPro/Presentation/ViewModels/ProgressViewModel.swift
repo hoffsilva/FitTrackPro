@@ -20,14 +20,6 @@ class ProgressViewModel: ObservableObject {
         setupAchievements()
     }
     
-    // Legacy init for backward compatibility
-    init(workoutRepository: WorkoutRepositoryProtocol) {
-        self.workoutRepository = workoutRepository
-        loadProgressData()
-        setupWeeklyData()
-        setupAchievements()
-    }
-    
     func loadProgressData() {
         Task {
             await refreshData()

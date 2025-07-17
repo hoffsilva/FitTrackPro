@@ -17,14 +17,6 @@ class WorkoutViewModel: ObservableObject {
         }
     }
     
-    // Legacy init for backward compatibility
-    init(workoutRepository: WorkoutRepositoryProtocol) {
-        self.workoutRepository = workoutRepository
-        Task {
-            await checkForActiveWorkout()
-        }
-    }
-    
     private func checkForActiveWorkout() async {
         do {
             currentWorkout = try await workoutRepository.getActiveWorkout()

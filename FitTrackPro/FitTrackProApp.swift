@@ -12,8 +12,8 @@ import Resolver
 struct FitTrackProApp: App {
     
     init() {
-        // Configure dependency injection
-        Resolver.registerAllServices()
+        // Configure dependency injection - Resolver will call registerAllServices() automatically
+        // when it first needs to resolve a dependency
         
         // Add development data for testing
         #if DEBUG

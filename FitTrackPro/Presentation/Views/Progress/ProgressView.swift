@@ -40,7 +40,7 @@ struct CircularProgressView: View {
 }
 
 struct ProgressView: View {
-    @StateObject private var viewModel = Resolver.resolve(ProgressViewModel.self)
+    @StateObject private var viewModel: ProgressViewModel = Resolver.resolve()
     
     var body: some View {
         NavigationView {

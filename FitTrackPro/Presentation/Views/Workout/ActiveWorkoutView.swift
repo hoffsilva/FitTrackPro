@@ -370,5 +370,5 @@ struct WorkoutCompletedView: View {
 }
 
 #Preview {
-    ActiveWorkoutView(workoutViewModel: Resolver.resolve(WorkoutViewModel.self))
+    ActiveWorkoutView(workoutViewModel: Resolver.resolve())
 }

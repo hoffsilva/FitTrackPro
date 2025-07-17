@@ -2,51 +2,26 @@ import Foundation
 import Resolver
 import SwiftData
 
+// MARK: - Resolver Registration
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
+        // Set default scope
+        defaultScope = .graph
+        
         // Register repositories
-        registerRepositories()
-        
-        // Register services
-        registerServices()
-        
-        // Register ViewModels
-        registerViewModels()
-    }
-    
-    // MARK: - Repositories
-    private static func registerRepositories() {
-        // Register WorkoutRepository
         register { InMemoryWorkoutRepository() as WorkoutRepositoryProtocol }
             .scope(.application)
         
-        // Register ExerciseService
         register { ExerciseService() as ExerciseServiceProtocol }
             .scope(.application)
-    }
-    
-    // MARK: - Services
-    private static func registerServices() {
-        // Add other services here as needed
-    }
-    
-    // MARK: - ViewModels
-    private static func registerViewModels() {
-        // Register ProgressViewModel
-        register { ProgressViewModel(workoutRepository: resolve()) }
-            .scope(.shared)
         
-        // Register WorkoutViewModel
-        register { WorkoutViewModel(workoutRepository: resolve()) }
-            .scope(.shared)
-        
-        // Register HomeViewModel
+        // Register ViewModels
+        register { ProgressViewModel() }
+        register { WorkoutViewModel() }
         register { HomeViewModel() }
-            .scope(.shared)
-        
-        // Register ExerciseLibraryViewModel
         register { ExerciseLibraryViewModel() }
-            .scope(.shared)
+        
+        print("✅ Resolver services registered successfully")
     }
 }
 
@@ -58,16 +33,11 @@ extension Resolver {
         register { SwiftDataWorkoutRepository(modelContext: modelContext) as WorkoutRepositoryProtocol }
             .scope(.application)
         
-        // Re-register ViewModels that depend on WorkoutRepository
-        register { ProgressViewModel(workoutRepository: resolve()) }
-            .scope(.shared)
-        
-        register { WorkoutViewModel(workoutRepository: resolve()) }
-            .scope(.shared)
+        print("✅ Resolver configured for SwiftData")
     }
 }
 
-// MARK: - Development Configuration
+// MARK: - Development Data
 extension Resolver {
     /// Add sample data for development
     public static func addDevelopmentData() {

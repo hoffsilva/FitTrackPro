@@ -2,8 +2,8 @@ import SwiftUI
 import Resolver
 
 struct HomeView: View {
-    @StateObject private var viewModel = Resolver.resolve(HomeViewModel.self)
-    @StateObject private var workoutViewModel = Resolver.resolve(WorkoutViewModel.self)
+    @StateObject private var viewModel: HomeViewModel = Resolver.resolve()
+    @StateObject private var workoutViewModel: WorkoutViewModel = Resolver.resolve()
     
     var body: some View {
         NavigationView {

@@ -21,12 +21,6 @@ class HomeViewModel: ObservableObject {
         loadDailyStats()
     }
     
-    // Legacy init for backward compatibility
-    init(exerciseService: ExerciseServiceProtocol) {
-        self.exerciseService = exerciseService
-        loadDailyStats()
-    }
-    
     private func loadDailyStats() {
         // Simulate realistic daily statistics
         let baseCalories = Int.random(in: 200...800)
