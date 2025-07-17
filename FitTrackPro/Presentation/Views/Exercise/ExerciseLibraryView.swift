@@ -1,15 +1,16 @@
 import SwiftUI
+import Resolver
 
 struct ExerciseLibraryView: View {
-    @StateObject private var viewModel = ExerciseLibraryViewModel()
+    @StateObject private var viewModel: ExerciseLibraryViewModel = Resolver.resolve()
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
                 // Header
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Exercise Library")
-                        .font(.system(size: 28, weight: .bold))
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
+                    Text(LocalizedKeys.Exercises.title.localized)
+                        .font(.system(size: DesignTokens.Typography.hero, weight: DesignTokens.Typography.Weight.bold))
                         .foregroundColor(.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
@@ -21,35 +22,37 @@ struct ExerciseLibraryView: View {
                         CategoryTabsView(viewModel: viewModel)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 20)
+                .sectionPadding()
+                .padding(.top, DesignTokens.Spacing.xl)
                 
                 // Exercise List
                 ScrollView {
-                    LazyVStack(spacing: 12) {
-                        if viewModel.isLoading {
-                            LoadingView()
-                        } else if let errorMessage = viewModel.errorMessage {
-                            ErrorView(message: errorMessage) {
-                                Task {
-                                    await viewModel.loadExercises()
-                                }
+                    AsyncContentView(
+                        isLoading: viewModel.isLoading,
+                        errorMessage: viewModel.errorMessage,
+                        isEmpty: viewModel.exercises.isEmpty,
+                        retryAction: {
+                            Task {
+                                await viewModel.loadExercises()
                             }
-                        } else {
+                        },
+                        loadingText: LocalizedKeys.Exercises.loading.localized,
+                        loadingSubtext: LocalizedKeys.Exercises.loadingSubtitle.localized,
+                        emptyTitle: viewModel.isSearching ? LocalizedContent.emptySearchTitle(for: viewModel.searchText) : LocalizedKeys.Exercises.emptyTitle.localized,
+                        emptyMessage: viewModel.isSearching ? LocalizedKeys.Exercises.emptySearchMessage.localized : LocalizedKeys.Exercises.emptyMessage.localized,
+                        emptyIcon: viewModel.isSearching ? "magnifyingglass" : "dumbbell"
+                    ) {
+                        LazyVStack(spacing: DesignTokens.Spacing.md) {
                             ForEach(viewModel.exercises, id: \.id) { exercise in
                                 NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                                     ExerciseRowView(exercise: exercise)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            
-                            if viewModel.exercises.isEmpty {
-                                EmptyStateView(isSearching: viewModel.isSearching, searchText: viewModel.searchText)
-                            }
                         }
+                        .sectionPadding()
+                        .padding(.top, DesignTokens.Spacing.xl)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 20)
                 }
             }
             .background(.backgroundPrimary)
@@ -71,7 +74,7 @@ struct SearchBarView: View {
                 .foregroundColor(.textSecondary)
                 .font(.system(size: 16, weight: .medium))
             
-            TextField("Search exercises...", text: $searchText)
+            TextField(LocalizedKeys.Exercises.searchPlaceholder.localized, text: $searchText)
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(.textPrimary)
         }

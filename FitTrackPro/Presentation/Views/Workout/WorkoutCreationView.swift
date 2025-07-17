@@ -1,8 +1,9 @@
 import SwiftUI
+import Resolver
 
 struct WorkoutCreationView: View {
     @ObservedObject var workoutViewModel: WorkoutViewModel
-    @StateObject private var exerciseViewModel = ExerciseLibraryViewModel()
+    @StateObject private var exerciseViewModel: ExerciseLibraryViewModel = Resolver.resolve()
     @State private var workoutName: String = ""
     @State private var selectedDays: [WeekDay] = []
     @State private var selectedExercises: [Exercise] = []
@@ -287,5 +288,5 @@ struct CreateWorkoutButton: View {
 }
 
 #Preview {
-    WorkoutCreationView(workoutViewModel: WorkoutViewModel())
+    WorkoutCreationView(workoutViewModel: Resolver.resolve())
 }

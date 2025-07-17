@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Resolver
 
 @MainActor
 class ExerciseLibraryViewModel: ObservableObject {
@@ -11,12 +12,16 @@ class ExerciseLibraryViewModel: ObservableObject {
     @Published var isSearching: Bool = false
     @Published var errorMessage: String? = nil
     
-    private let exerciseService: ExerciseServiceProtocol
+    @Injected private var exerciseService: ExerciseServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     
+    init() {
+        setupSearchDebounce()
+    }
     
-    init(exerciseService: ExerciseServiceProtocol? = nil) {
-        self.exerciseService = exerciseService ?? ExerciseService()
+    // Legacy init for backward compatibility
+    init(exerciseService: ExerciseServiceProtocol) {
+        self.exerciseService = exerciseService
         setupSearchDebounce()
     }
     

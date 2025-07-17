@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Resolver
 
 @MainActor
 class WorkoutViewModel: ObservableObject {
@@ -8,12 +9,9 @@ class WorkoutViewModel: ObservableObject {
     @Published var isShowingActiveWorkout: Bool = false
     @Published var hasActiveWorkout: Bool = false
     
-    private let workoutRepository: WorkoutRepositoryProtocol
+    @Injected private var workoutRepository: WorkoutRepositoryProtocol
     
-    init(workoutRepository: WorkoutRepositoryProtocol? = nil) {
-        // Use InMemoryWorkoutRepository as default for now
-        // Can be easily switched to SwiftDataWorkoutRepository later
-        self.workoutRepository = workoutRepository ?? InMemoryWorkoutRepository()
+    init() {
         Task {
             await checkForActiveWorkout()
         }
@@ -87,10 +85,13 @@ class WorkoutViewModel: ObservableObject {
         }
     }
     
-    func finishWorkout() {
+    func finishWorkout(with elapsedTime: TimeInterval? = nil) {
         Task {
             do {
                 if let workout = currentWorkout {
+                    // Use provided elapsed time or calculate from createdAt
+                    let workoutDuration = elapsedTime ?? Date().timeIntervalSince(workout.createdAt)
+                    
                     // Mark workout as completed and save
                     let completedWorkout = Workout(
                         id: workout.id,
@@ -98,10 +99,12 @@ class WorkoutViewModel: ObservableObject {
                         exercises: workout.exercises,
                         scheduledDays: workout.scheduledDays,
                         createdAt: workout.createdAt,
-                        duration: Date().timeIntervalSince(workout.createdAt),
+                        duration: workoutDuration,
                         isCompleted: true
                     )
                     try await workoutRepository.updateWorkout(completedWorkout)
+                    
+                    print("Workout completed! Duration: \(Int(workoutDuration / 60)) minutes")
                 }
                 
                 try await workoutRepository.clearActiveWorkout()

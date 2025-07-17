@@ -1,13 +1,14 @@
 import SwiftUI
+import Resolver
 
 struct HomeView: View {
-    @StateObject private var viewModel = HomeViewModel()
-    @StateObject private var workoutViewModel = WorkoutViewModel()
+    @StateObject private var viewModel: HomeViewModel = Resolver.resolve()
+    @StateObject private var workoutViewModel: WorkoutViewModel = Resolver.resolve()
     
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: DesignTokens.Spacing.xl) {
                     // Header
                     HomeHeaderView()
                     
@@ -20,7 +21,7 @@ struct HomeView: View {
                     // Recommended Exercises
                     RecommendedSectionView(viewModel: viewModel)
                 }
-                .padding(.horizontal, 16)
+                .sectionPadding()
             }
             .background(.backgroundPrimary)
             .navigationBarHidden(true)
@@ -42,16 +43,7 @@ struct HomeView: View {
 struct HomeHeaderView: View {
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case 5..<12:
-            return "Good morning"
-        case 12..<17:
-            return "Good afternoon"
-        case 17..<22:
-            return "Good evening"
-        default:
-            return "Good night"
-        }
+        return LocalizedContent.greeting(for: hour)
     }
     
     private var currentDate: String {
@@ -61,15 +53,15 @@ struct HomeHeaderView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                     Text("\(greeting), Hoff!")
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.system(size: DesignTokens.Typography.hero, weight: DesignTokens.Typography.Weight.bold))
                         .foregroundColor(.textPrimary)
                     
                     Text(currentDate)
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.system(size: DesignTokens.Typography.headline, weight: DesignTokens.Typography.Weight.medium))
                         .foregroundColor(.textSecondary)
                 }
                 
@@ -79,12 +71,12 @@ struct HomeHeaderView: View {
                     // TODO: Implement notifications
                 }) {
                     Image(systemName: "bell")
-                        .font(.system(size: 20, weight: .medium))
+                        .font(.system(size: DesignTokens.Typography.title, weight: DesignTokens.Typography.Weight.medium))
                         .foregroundColor(.textSecondary)
                 }
             }
         }
-        .padding(.top, 20)
+        .padding(.top, DesignTokens.Spacing.xl)
     }
 }
 
@@ -92,48 +84,52 @@ struct StatsGridView: View {
     @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                StatCardView(
+        VStack(spacing: DesignTokens.Spacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
+                StatsCardComponent(
                     value: formatNumber(viewModel.todayCalories),
-                    label: "Calories burned",
+                    label: LocalizedKeys.Home.Stats.calories.localized,
                     gradient: LinearGradient(
                         colors: [.primaryOrange, .primaryOrange.opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "flame"
                 )
                 
-                StatCardView(
+                StatsCardComponent(
                     value: formatNumber(viewModel.todaySteps),
-                    label: "Steps today",
+                    label: LocalizedKeys.Home.Stats.steps.localized,
                     gradient: LinearGradient(
                         colors: [.primaryBlue, .primaryBlue.opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "figure.walk"
                 )
             }
             
-            HStack(spacing: 12) {
-                StatCardView(
+            HStack(spacing: DesignTokens.Spacing.md) {
+                StatsCardComponent(
                     value: "\(viewModel.weeklyWorkouts)",
-                    label: "Workouts this week",
+                    label: LocalizedKeys.Home.Stats.workouts.localized,
                     gradient: LinearGradient(
                         colors: [.green, .green.opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "dumbbell"
                 )
                 
-                StatCardView(
+                StatsCardComponent(
                     value: "\(viewModel.currentStreak)",
-                    label: "Day streak",
+                    label: LocalizedKeys.Home.Stats.streak.localized,
                     gradient: LinearGradient(
                         colors: [.purple, .purple.opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "flame"
                 )
             }
         }
@@ -147,41 +143,21 @@ struct StatsGridView: View {
     }
 }
 
-struct StatCardView: View {
-    let value: String
-    let label: String
-    let gradient: LinearGradient
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(value)
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.white)
-            
-            Text(label)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white.opacity(0.9))
-                .multilineTextAlignment(.leading)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(20)
-        .background(gradient)
-        .cornerRadius(16)
-    }
-}
 
 struct QuickActionsView: View {
     @ObservedObject var workoutViewModel: WorkoutViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Quick Actions")
-                .font(.system(size: 20, weight: .bold))
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+            Text(LocalizedKeys.Home.QuickActions.title.localized)
+                .font(.system(size: DesignTokens.Typography.title, weight: DesignTokens.Typography.Weight.bold))
                 .foregroundColor(.textPrimary)
             
             QuickActionButton(
                 icon: "play.fill",
-                title: workoutViewModel.hasActiveWorkout ? "Continue Workout" : "Start Workout",
+                title: workoutViewModel.hasActiveWorkout ? 
+                    LocalizedKeys.Home.QuickActions.continueWorkout.localized : 
+                    LocalizedKeys.Home.QuickActions.startWorkout.localized,
                 action: {
                     workoutViewModel.startWorkout()
                 }
@@ -225,26 +201,30 @@ struct RecommendedSectionView: View {
     @ObservedObject var viewModel: HomeViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("Recommended for You")
-                .font(.system(size: 20, weight: .bold))
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+            Text(LocalizedKeys.Home.Recommended.title.localized)
+                .font(.system(size: DesignTokens.Typography.title, weight: DesignTokens.Typography.Weight.bold))
                 .foregroundColor(.textPrimary)
             
-            if viewModel.isLoadingRecommended {
-                LoadingView()
-            } else if let errorMessage = viewModel.errorMessage {
-                ErrorView(message: errorMessage) {
+            AsyncContentView(
+                isLoading: viewModel.isLoadingRecommended,
+                errorMessage: viewModel.errorMessage,
+                isEmpty: viewModel.recommendedExercises.isEmpty,
+                retryAction: {
                     Task {
                         await viewModel.loadRecommendedExercises()
                     }
-                }
-            } else if viewModel.recommendedExercises.isEmpty {
-                EmptyStateView()
-            } else {
+                },
+                loadingText: LocalizedKeys.Home.Recommended.loading.localized,
+                loadingSubtext: LocalizedKeys.Home.Recommended.loadingSubtitle.localized,
+                emptyTitle: LocalizedKeys.Home.Recommended.emptyTitle.localized,
+                emptyMessage: LocalizedKeys.Home.Recommended.emptyMessage.localized,
+                emptyIcon: "star"
+            ) {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 12) {
+                ], spacing: DesignTokens.Spacing.md) {
                     ForEach(viewModel.recommendedExercises.prefix(4), id: \.id) { exercise in
                         NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                             RecommendedExerciseCard(exercise: exercise)

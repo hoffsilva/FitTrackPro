@@ -1,33 +1,6 @@
 import SwiftUI
+import Resolver
 
-struct ActivityIndicator: View {
-    @State private var isAnimating = false
-    
-    var body: some View {
-        Circle()
-            .trim(from: 0, to: 0.8)
-            .stroke(
-                Color("PrimaryOrange"),
-                style: StrokeStyle(
-                    lineWidth: 3,
-                    lineCap: .round
-                )
-            )
-            .frame(width: 24, height: 24)
-            .rotationEffect(.degrees(isAnimating ? 360 : 0))
-            .animation(
-                Animation.linear(duration: 1.0)
-                    .repeatForever(autoreverses: false),
-                value: isAnimating
-            )
-            .onAppear {
-                isAnimating = true
-            }
-            .onDisappear {
-                isAnimating = false
-            }
-    }
-}
 
 struct CircularProgressView: View {
     let progress: Double
@@ -67,7 +40,7 @@ struct CircularProgressView: View {
 }
 
 struct ProgressView: View {
-    @StateObject private var viewModel = ProgressViewModel()
+    @StateObject private var viewModel: ProgressViewModel = Resolver.resolve()
     
     var body: some View {
         NavigationView {
@@ -119,7 +92,7 @@ struct ProgressHeaderView: View {
             Spacer()
             
             if viewModel.isLoading {
-                ActivityIndicator()
+                NavigationBarLoadingView(size: 20)
             } else {
                 Button(action: {
                     Task {
@@ -232,48 +205,52 @@ struct ProgressStatsView: View {
     @ObservedObject var viewModel: ProgressViewModel
     
     var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                StatCardView(
+        VStack(spacing: DesignTokens.Spacing.md) {
+            HStack(spacing: DesignTokens.Spacing.md) {
+                StatsCardComponent(
                     value: "\(viewModel.progressStats.totalWorkouts)",
                     label: "Total workouts",
                     gradient: LinearGradient(
                         colors: [Color("PrimaryOrange"), Color("PrimaryOrange").opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "dumbbell"
                 )
                 
-                StatCardView(
+                StatsCardComponent(
                     value: String(format: "%.1f", viewModel.progressStats.averageHoursPerWeek),
                     label: "Avg hours/week",
                     gradient: LinearGradient(
                         colors: [Color("PrimaryBlue"), Color("PrimaryBlue").opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "clock"
                 )
             }
             
-            HStack(spacing: 12) {
-                StatCardView(
+            HStack(spacing: DesignTokens.Spacing.md) {
+                StatsCardComponent(
                     value: "\(viewModel.progressStats.totalCaloriesBurned)",
                     label: "Total calories",
                     gradient: LinearGradient(
                         colors: [Color("PrimaryPurple"), Color("PrimaryPurple").opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "flame"
                 )
                 
-                StatCardView(
+                StatsCardComponent(
                     value: "\(viewModel.progressStats.currentStreak)",
                     label: "Current streak",
                     gradient: LinearGradient(
                         colors: [Color.green, Color.green.opacity(0.8)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    )
+                    ),
+                    icon: "calendar"
                 )
             }
         }
@@ -302,18 +279,20 @@ struct AchievementsView: View {
                     .cornerRadius(8)
             }
             
-            if viewModel.isLoading {
-                HStack {
-                    Spacer()
-                    ActivityIndicator()
-                    Spacer()
-                }
-                .padding(.vertical, 40)
-            } else {
+            AsyncContentView(
+                isLoading: viewModel.isLoading,
+                errorMessage: nil,
+                isEmpty: viewModel.achievements.isEmpty,
+                loadingText: "Loading achievements...",
+                loadingSubtext: "Updating your progress",
+                emptyTitle: "No achievements yet",
+                emptyMessage: "Complete workouts to earn achievements",
+                emptyIcon: "trophy"
+            ) {
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: 12) {
+                ], spacing: DesignTokens.Spacing.md) {
                     ForEach(viewModel.achievements, id: \.id) { achievement in
                         AchievementBadgeView(achievement: achievement)
                     }

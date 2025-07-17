@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import Resolver
 
 @MainActor
 class HomeViewModel: ObservableObject {
@@ -13,11 +14,10 @@ class HomeViewModel: ObservableObject {
     @Published var weeklyWorkouts: Int = 0
     @Published var currentStreak: Int = 0
     
-    private let exerciseService: ExerciseServiceProtocol
+    @Injected private var exerciseService: ExerciseServiceProtocol
     private var cancellables = Set<AnyCancellable>()
     
-    init(exerciseService: ExerciseServiceProtocol? = nil) {
-        self.exerciseService = exerciseService ?? ExerciseService()
+    init() {
         loadDailyStats()
     }
     
@@ -38,9 +38,6 @@ class HomeViewModel: ObservableObject {
         do {
             isLoadingRecommended = true
             errorMessage = nil
-            
-            // Get a mix of different body parts for recommendations
-            let parameters = PaginationParameters(limit: 10, offset: 0)
             
             // Get exercises from different categories for variety
             async let chestExercises = exerciseService.getExercisesByBodyPart("chest", parameters: PaginationParameters(limit: 3, offset: 0))

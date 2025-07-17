@@ -1,7 +1,20 @@
 import SwiftUI
 
 struct LoadingView: View {
+    let primaryText: String?
+    let secondaryText: String?
+    let size: CGFloat
     @State private var isAnimating = false
+    
+    init(
+        primaryText: String? = nil,
+        secondaryText: String? = nil,
+        size: CGFloat = 60
+    ) {
+        self.primaryText = primaryText
+        self.secondaryText = secondaryText
+        self.size = size
+    }
     
     var body: some View {
         VStack(spacing: 20) {
@@ -9,7 +22,7 @@ struct LoadingView: View {
             ZStack {
                 Circle()
                     .stroke(Color.primaryOrange.opacity(0.2), lineWidth: 4)
-                    .frame(width: 60, height: 60)
+                    .frame(width: size, height: size)
                 
                 Circle()
                     .trim(from: 0, to: 0.7)
@@ -21,7 +34,7 @@ struct LoadingView: View {
                         ),
                         style: StrokeStyle(lineWidth: 4, lineCap: .round)
                     )
-                    .frame(width: 60, height: 60)
+                    .frame(width: size, height: size)
                     .rotationEffect(.degrees(isAnimating ? 360 : 0))
                     .animation(
                         .linear(duration: 1.2).repeatForever(autoreverses: false),
@@ -30,17 +43,19 @@ struct LoadingView: View {
             }
             
             VStack(spacing: 8) {
-                Text("Loading exercises...")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.textPrimary)
-                
-                Text("Please wait a moment")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.textSecondary)
+                if let primaryText, let secondaryText {
+                    Text(primaryText)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.textPrimary)
+                    
+                    Text(secondaryText)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.textSecondary)
+                }
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 60)
+        .padding(.vertical, size)
         .onAppear {
             isAnimating = true
         }
