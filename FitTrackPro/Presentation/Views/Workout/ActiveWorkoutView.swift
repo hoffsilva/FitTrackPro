@@ -60,6 +60,19 @@ struct ActiveWorkoutView: View {
             .onDisappear {
                 stopTimer()
             }
+            .alert(
+                LocalizedKeys.Profile.MyWorkouts.savePromptTitle.localized,
+                isPresented: $workoutViewModel.showSaveWorkoutPrompt
+            ) {
+                Button(LocalizedKeys.Profile.MyWorkouts.savePromptSave.localized) {
+                    workoutViewModel.saveWorkoutAsTemplate()
+                }
+                Button(LocalizedKeys.Profile.MyWorkouts.savePromptSkip.localized, role: .cancel) {
+                    workoutViewModel.dismissSavePrompt()
+                }
+            } message: {
+                Text(LocalizedKeys.Profile.MyWorkouts.savePromptMessage.localized)
+            }
         }
     }
     

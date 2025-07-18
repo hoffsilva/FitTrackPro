@@ -8,6 +8,8 @@ class WorkoutViewModel: ObservableObject {
     @Published var isCreatingWorkout: Bool = false
     @Published var isShowingActiveWorkout: Bool = false
     @Published var hasActiveWorkout: Bool = false
+    @Published var showSaveWorkoutPrompt: Bool = false
+    @Published var completedWorkoutToSave: Workout?
     
     @Injected private var workoutRepository: WorkoutRepositoryProtocol
     
@@ -104,6 +106,10 @@ class WorkoutViewModel: ObservableObject {
                     )
                     try await workoutRepository.updateWorkout(completedWorkout)
                     
+                    // Set completed workout for potential saving as template
+                    completedWorkoutToSave = completedWorkout
+                    showSaveWorkoutPrompt = true
+                    
                     print("Workout completed! Duration: \(Int(workoutDuration / 60)) minutes")
                 }
                 
@@ -122,5 +128,17 @@ class WorkoutViewModel: ObservableObject {
                 isShowingActiveWorkout = false
             }
         }
+    }
+    
+    func saveWorkoutAsTemplate() {
+        // The workout is already saved as completed in the repository
+        // MyWorkoutsView will show completed workouts as templates
+        showSaveWorkoutPrompt = false
+        completedWorkoutToSave = nil
+    }
+    
+    func dismissSavePrompt() {
+        showSaveWorkoutPrompt = false
+        completedWorkoutToSave = nil
     }
 }
