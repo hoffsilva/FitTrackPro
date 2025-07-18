@@ -100,23 +100,28 @@ struct ProfileStatItem: View {
 }
 
 struct SettingsSectionView: View {
+    @State private var showMyWorkouts = false
+    
     let settingsItems = [
-        SettingsItem(icon: "person.circle", title: "Edit Profile", hasChevron: true),
-        SettingsItem(icon: "bell", title: "Notifications", hasChevron: true),
-        SettingsItem(icon: "chart.bar", title: "Privacy", hasChevron: true),
-        SettingsItem(icon: "questionmark.circle", title: "Help & Support", hasChevron: true),
-        SettingsItem(icon: "info.circle", title: "About", hasChevron: true)
+        SettingsItem(icon: "dumbbell", title: LocalizedKeys.Profile.myWorkouts.localized, hasChevron: true, action: .myWorkouts),
+        SettingsItem(icon: "person.circle", title: LocalizedKeys.Profile.editProfile.localized, hasChevron: true, action: .none),
+        SettingsItem(icon: "bell", title: LocalizedKeys.Profile.notifications.localized, hasChevron: true, action: .none),
+        SettingsItem(icon: "chart.bar", title: LocalizedKeys.Profile.privacy.localized, hasChevron: true, action: .none),
+        SettingsItem(icon: "questionmark.circle", title: LocalizedKeys.Profile.helpSupport.localized, hasChevron: true, action: .none),
+        SettingsItem(icon: "info.circle", title: LocalizedKeys.Profile.about.localized, hasChevron: true, action: .none)
     ]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Settings")
+            Text(LocalizedKeys.Profile.settings.localized)
                 .font(.system(size: 20, weight: .bold))
                 .foregroundColor(.textPrimary)
             
             VStack(spacing: 0) {
                 ForEach(Array(settingsItems.enumerated()), id: \.offset) { index, item in
-                    SettingsRowView(item: item)
+                    SettingsRowView(item: item) {
+                        handleSettingsAction(item.action)
+                    }
                     
                     if index < settingsItems.count - 1 {
                         Divider()
@@ -131,17 +136,36 @@ struct SettingsSectionView: View {
                     .stroke(.gray.opacity(0.2), lineWidth: 2)
             )
         }
+        .sheet(isPresented: $showMyWorkouts) {
+            MyWorkoutsView()
+        }
     }
+    
+    private func handleSettingsAction(_ action: SettingsAction) {
+        switch action {
+        case .myWorkouts:
+            showMyWorkouts = true
+        case .none:
+            break
+        }
+    }
+}
+
+enum SettingsAction {
+    case myWorkouts
+    case none
 }
 
 struct SettingsItem {
     let icon: String
     let title: String
     let hasChevron: Bool
+    let action: SettingsAction
 }
 
 struct SettingsRowView: View {
     let item: SettingsItem
+    let onTap: () -> Void
     
     var body: some View {
         HStack(spacing: 16) {
@@ -166,7 +190,7 @@ struct SettingsRowView: View {
         .padding(.vertical, 16)
         .contentShape(Rectangle())
         .onTapGesture {
-            // Handle tap
+            onTap()
         }
     }
 }
