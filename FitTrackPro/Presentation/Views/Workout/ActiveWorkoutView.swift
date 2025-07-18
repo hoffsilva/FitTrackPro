@@ -169,21 +169,40 @@ struct ExerciseProgressView: View {
     let currentIndex: Int
     let totalExercises: Int
     
+    private var safeCurrentIndex: Int {
+        max(0, min(currentIndex, totalExercises - 1))
+    }
+    
+    private var progressValue: Double {
+        guard totalExercises > 0 else { return 0 }
+        return Double(safeCurrentIndex + 1)
+    }
+    
+    private var progressTotal: Double {
+        max(1, Double(totalExercises))
+    }
+    
+    private var percentageText: String {
+        guard totalExercises > 0 else { return "0%" }
+        let percentage = Int((progressValue / progressTotal) * 100)
+        return "\(percentage)%"
+    }
+    
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Exercise \(min(currentIndex + 1, totalExercises)) of \(totalExercises)")
+                Text("Exercise \(safeCurrentIndex + 1) of \(totalExercises)")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.textSecondary)
                 
                 Spacer()
                 
-                Text("\(Int((min(Double(currentIndex + 1), Double(totalExercises)) / Double(totalExercises)) * 100))%")
+                Text(percentageText)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.primaryOrange)
             }
             
-            SwiftUI.ProgressView(value: min(Double(currentIndex + 1), Double(totalExercises)), total: Double(totalExercises))
+            SwiftUI.ProgressView(value: progressValue, total: progressTotal)
                 .progressViewStyle(LinearProgressViewStyle(tint: .primaryOrange))
                 .scaleEffect(y: 2)
         }
