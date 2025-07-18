@@ -1,7 +1,8 @@
 import SwiftUI
+import Resolver
 
 struct ProfileView: View {
-    @EnvironmentObject var workoutViewModel: WorkoutViewModel
+    @StateObject private var workoutViewModel: WorkoutViewModel = Resolver.resolve()
     var body: some View {
         NavigationView {
             ScrollView {
@@ -13,7 +14,7 @@ struct ProfileView: View {
                     ProfileStatsView()
                     
                     // Settings Section
-                    SettingsSectionView(workoutViewModel: workoutViewModel)
+                    SettingsSectionView()
                 }
                 .padding(.horizontal, 16)
             }
@@ -101,7 +102,6 @@ struct ProfileStatItem: View {
 }
 
 struct SettingsSectionView: View {
-    let workoutViewModel: WorkoutViewModel
     @State private var showMyWorkouts = false
     
     let settingsItems = [
@@ -139,7 +139,7 @@ struct SettingsSectionView: View {
             )
         }
         .sheet(isPresented: $showMyWorkouts) {
-            MyWorkoutsView(workoutViewModel: workoutViewModel)
+            MyWorkoutsView()
         }
     }
     
@@ -199,5 +199,4 @@ struct SettingsRowView: View {
 
 #Preview {
     ProfileView()
-        .environmentObject(WorkoutViewModel())
 }

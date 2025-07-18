@@ -8,7 +8,6 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView()
-                .environmentObject(sharedWorkoutViewModel)
                 .tabItem {
                     Image(systemName: selectedTab == 0 ? "house.fill" : "house")
                     Text("Home")
@@ -30,7 +29,6 @@ struct MainTabView: View {
                 .tag(2)
             
             ProfileView()
-                .environmentObject(sharedWorkoutViewModel)
                 .tabItem {
                     Image(systemName: selectedTab == 3 ? "person.fill" : "person")
                     Text("Profile")

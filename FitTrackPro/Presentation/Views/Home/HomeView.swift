@@ -3,7 +3,7 @@ import Resolver
 
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel = Resolver.resolve()
-    @EnvironmentObject var workoutViewModel: WorkoutViewModel
+    @StateObject private var workoutViewModel: WorkoutViewModel = Resolver.resolve()
     
     var body: some View {
         NavigationView {
@@ -288,5 +288,4 @@ struct RecommendedExerciseCard: View {
 
 #Preview {
     HomeView()
-        .environmentObject(WorkoutViewModel())
 }

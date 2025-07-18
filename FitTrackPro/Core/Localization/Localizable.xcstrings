@@ -49,9 +49,6 @@
         }
       }
     },
-    "%lld%%" : {
-
-    },
     "%lldmin" : {
 
     },
@@ -191,6 +188,91 @@
     },
     "Enter workout name" : {
 
+    },
+    "error.data.fallback_mode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Using offline data"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usando dados offline"
+          }
+        }
+      }
+    },
+    "error.exercise.fetch_failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to fetch exercises"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falha ao buscar exercícios"
+          }
+        }
+      }
+    },
+    "error.exercise.not_found" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercise not found"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exercício não encontrado"
+          }
+        }
+      }
+    },
+    "error.exercise.save_failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to save exercise"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falha ao salvar exercício"
+          }
+        }
+      }
+    },
+    "error.exercise.sync_failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to sync exercise data"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falha ao sincronizar dados de exercícios"
+          }
+        }
+      }
     },
     "Exercise %lld of %lld" : {
       "localizations" : {
@@ -729,275 +811,6 @@
     "Profile" : {
 
     },
-    "Progress" : {
-
-    },
-    "progress.achievements.empty.message" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Complete workouts to earn achievements"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Complete treinos para ganhar conquistas"
-          }
-        }
-      }
-    },
-    "progress.achievements.empty.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No achievements yet"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda sem conquistas"
-          }
-        }
-      }
-    },
-    "progress.achievements.loading" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading achievements..."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Carregando conquistas..."
-          }
-        }
-      }
-    },
-    "progress.achievements.loading.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Updating your progress"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atualizando seu progresso"
-          }
-        }
-      }
-    },
-    "progress.achievements.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Achievements"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conquistas"
-          }
-        }
-      }
-    },
-    "progress.loading" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading progress..."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Carregando progresso..."
-          }
-        }
-      }
-    },
-    "progress.loading.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Updating your stats"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atualizando suas estatísticas"
-          }
-        }
-      }
-    },
-    "progress.stats.avg_hours" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avg hours/week"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Média horas/semana"
-          }
-        }
-      }
-    },
-    "progress.stats.current_streak" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Current streak"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sequência atual"
-          }
-        }
-      }
-    },
-    "progress.stats.total_calories" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Total calories"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Total de calorias"
-          }
-        }
-      }
-    },
-    "progress.stats.total_workouts" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Total workouts"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Total de treinos"
-          }
-        }
-      }
-    },
-    "progress.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your Progress"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu Progresso"
-          }
-        }
-      }
-    },
-    "progress.weekly_activity" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weekly Activity"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atividade Semanal"
-          }
-        }
-      }
-    },
-    "Schedule Days" : {
-
-    },
-    "Secondary Muscles" : {
-
-    },
-    "Select Exercises" : {
-
-    },
-    "Select which days of the week to schedule this workout" : {
-
-    },
-    "Set %lld" : {
-
-    },
-    "Sets" : {
-
-    },
-    "Tap 'Add Exercise' to get started" : {
-
-    },
-    "Total time: %@" : {
-
-    },
-    "Try Again" : {
-
-    },
-    "Try searching for a different exercise" : {
-
-    },
-    "Try selecting a different category" : {
-
-    },
-    "Weekly Activity" : {
-
-    },
-    "Workout Complete!" : {
-
-    },
-    "Workout Name" : {
-
-    },
-    "Your Progress" : {
-
-    },
     "profile.about" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1321,90 +1134,274 @@
         }
       }
     },
-    "error.exercise.not_found" : {
+    "Progress" : {
+
+    },
+    "progress.achievements.empty.message" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exercise not found"
+            "value" : "Complete workouts to earn achievements"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exercício não encontrado"
+            "value" : "Complete treinos para ganhar conquistas"
           }
         }
       }
     },
-    "error.exercise.save_failed" : {
+    "progress.achievements.empty.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to save exercise"
+            "value" : "No achievements yet"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falha ao salvar exercício"
+            "value" : "Ainda sem conquistas"
           }
         }
       }
     },
-    "error.exercise.fetch_failed" : {
+    "progress.achievements.loading" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to fetch exercises"
+            "value" : "Loading achievements..."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falha ao buscar exercícios"
+            "value" : "Carregando conquistas..."
           }
         }
       }
     },
-    "error.exercise.sync_failed" : {
+    "progress.achievements.loading.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Failed to sync exercise data"
+            "value" : "Updating your progress"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falha ao sincronizar dados de exercícios"
+            "value" : "Atualizando seu progresso"
           }
         }
       }
     },
-    "error.data.fallback_mode" : {
+    "progress.achievements.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Using offline data"
+            "value" : "Achievements"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usando dados offline"
+            "value" : "Conquistas"
           }
         }
       }
+    },
+    "progress.loading" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading progress..."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carregando progresso..."
+          }
+        }
+      }
+    },
+    "progress.loading.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating your stats"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualizando suas estatísticas"
+          }
+        }
+      }
+    },
+    "progress.stats.avg_hours" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avg hours/week"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Média horas/semana"
+          }
+        }
+      }
+    },
+    "progress.stats.current_streak" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current streak"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sequência atual"
+          }
+        }
+      }
+    },
+    "progress.stats.total_calories" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total calories"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total de calorias"
+          }
+        }
+      }
+    },
+    "progress.stats.total_workouts" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total workouts"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total de treinos"
+          }
+        }
+      }
+    },
+    "progress.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Progress"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu Progresso"
+          }
+        }
+      }
+    },
+    "progress.weekly_activity" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly Activity"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atividade Semanal"
+          }
+        }
+      }
+    },
+    "Schedule Days" : {
+
+    },
+    "Secondary Muscles" : {
+
+    },
+    "Select Exercises" : {
+
+    },
+    "Select which days of the week to schedule this workout" : {
+
+    },
+    "Set %lld" : {
+
+    },
+    "Sets" : {
+
+    },
+    "Tap 'Add Exercise' to get started" : {
+
+    },
+    "Total time: %@" : {
+
+    },
+    "Try Again" : {
+
+    },
+    "Try searching for a different exercise" : {
+
+    },
+    "Try selecting a different category" : {
+
+    },
+    "Weekly Activity" : {
+
+    },
+    "Workout Complete!" : {
+
+    },
+    "Workout Name" : {
+
+    },
+    "Your Progress" : {
+
     }
   },
   "version" : "1.0"

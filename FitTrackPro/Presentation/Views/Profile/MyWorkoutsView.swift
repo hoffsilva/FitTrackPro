@@ -2,7 +2,7 @@ import SwiftUI
 import Resolver
 
 struct MyWorkoutsView: View {
-    let workoutViewModel: WorkoutViewModel
+    @StateObject private var workoutViewModel: WorkoutViewModel = Resolver.resolve()
     @StateObject private var viewModel: MyWorkoutsViewModel = Resolver.resolve()
     @Environment(\.dismiss) private var dismiss
     
@@ -177,5 +177,5 @@ struct MyWorkoutsHeaderView: View {
 }
 
 #Preview {
-    MyWorkoutsView(workoutViewModel: WorkoutViewModel())
+    MyWorkoutsView()
 }
