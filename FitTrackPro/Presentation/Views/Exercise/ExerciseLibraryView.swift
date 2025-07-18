@@ -43,11 +43,34 @@ struct ExerciseLibraryView: View {
                         emptyIcon: viewModel.isSearching ? "magnifyingglass" : "dumbbell"
                     ) {
                         LazyVStack(spacing: DesignTokens.Spacing.md) {
-                            ForEach(viewModel.exercises, id: \.id) { exercise in
+                            ForEach(viewModel.exercises.indices, id: \.self) { index in
+                                let exercise = viewModel.exercises[index]
                                 NavigationLink(destination: ExerciseDetailView(exercise: exercise)) {
                                     ExerciseRowView(exercise: exercise)
                                 }
                                 .buttonStyle(PlainButtonStyle())
+                                .onAppear {
+                                    // Load more when reaching the last item
+                                    if index == viewModel.exercises.count - 1 && viewModel.canLoadMore && !viewModel.isLoadingMore {
+                                        Task {
+                                            await viewModel.loadMoreExercises()
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Loading more indicator
+                            if viewModel.isLoadingMore {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                    Text("Carregando mais...")
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.textSecondary)
+                                    Spacer()
+                                }
+                                .padding(.vertical, DesignTokens.Spacing.lg)
                             }
                         }
                         .sectionPadding()

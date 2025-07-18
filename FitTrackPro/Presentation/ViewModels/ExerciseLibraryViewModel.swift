@@ -11,9 +11,13 @@ class ExerciseLibraryViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isSearching: Bool = false
     @Published var errorMessage: String? = nil
+    @Published var canLoadMore: Bool = true
+    @Published var isLoadingMore: Bool = false
     
     @Injected private var exerciseRepository: ExerciseRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
+    private var currentPage: Int = 0
+    private let pageSize: Int = 20 // Optimal for production - balance between performance and UX
     
     init() {
         setupSearchDebounce()
@@ -54,6 +58,7 @@ class ExerciseLibraryViewModel: ObservableObject {
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .removeDuplicates()
             .sink { [weak self] _ in
+                self?.resetPagination()
                 Task {
                     await self?.loadExercises()
                 }
@@ -67,45 +72,100 @@ class ExerciseLibraryViewModel: ObservableObject {
             isLoading = true
             isSearching = !searchText.isEmpty
             errorMessage = nil
+            currentPage = 0
             
-            let parameters = PaginationParameters(limit: 200, offset: 0)
-            var exercisesList: [Exercise]
-            
-            // If searching, always load all exercises and filter by search term
-            if !searchText.isEmpty {
-                exercisesList = try await exerciseRepository.getAllExercises(parameters: parameters)
-                exercisesList = exercisesList.filter { exercise in
-                    exercise.name.localizedCaseInsensitiveContains(searchText) ||
-                    exercise.bodyPart.rawValue.localizedCaseInsensitiveContains(searchText) ||
-                    exercise.target.localizedCaseInsensitiveContains(searchText) ||
-                    exercise.equipment.localizedCaseInsensitiveContains(searchText)
-                }
-            } else {
-                // When not searching, filter by selected body part
-                if selectedBodyPart == .all {
-                    exercisesList = try await exerciseRepository.getAllExercises(parameters: parameters)
-                } else {
-                    exercisesList = try await exerciseRepository.getExercisesByBodyPart(selectedBodyPart.rawValue, parameters: parameters)
-                }
-            }
+            let exercisesList = try await fetchExercises(page: 0)
             
             self.exercises = exercisesList
+            // Simple pagination logic: if we got a full page, assume there might be more
+            self.canLoadMore = exercisesList.count >= pageSize
             
         } catch {
             self.errorMessage = "Failed to load exercises: \(error.localizedDescription)"
             self.exercises = []
+            self.canLoadMore = false
+            print("❌ Initial load error: \(error)")
         }
         
         isLoading = false
         isSearching = false
     }
     
+    func loadMoreExercises() async {
+        guard canLoadMore && !isLoadingMore else { return }
+        
+        do {
+            isLoadingMore = true
+            currentPage += 1
+            
+            let newExercises = try await fetchExercises(page: currentPage)
+            
+            self.exercises.append(contentsOf: newExercises)
+            
+            // Simple logic: if we got less than a full page, we're done
+            self.canLoadMore = newExercises.count >= pageSize
+            
+        } catch {
+            // Reset page on error
+            currentPage -= 1
+            self.errorMessage = "Failed to load more exercises: \(error.localizedDescription)"
+        }
+        
+        isLoadingMore = false
+    }
+    
+    private func fetchExercises(page: Int) async throws -> [Exercise] {
+        let parameters = PaginationParameters(limit: pageSize, offset: page * pageSize)
+        var exercisesList: [Exercise]
+        
+        // Use efficient search when searching
+        if !searchText.isEmpty {
+            // Use optimized database search instead of client-side filtering
+            exercisesList = try await exerciseRepository.searchExercises(query: searchText)
+            
+            // Apply body part filter to search results if needed
+            if selectedBodyPart != .all {
+                exercisesList = exercisesList.filter { exercise in
+                    exercise.bodyPart == selectedBodyPart
+                }
+            }
+            
+            // Apply pagination to search results
+            let startIndex = page * pageSize
+            let endIndex = min(startIndex + pageSize, exercisesList.count)
+            
+            if startIndex < exercisesList.count {
+                exercisesList = Array(exercisesList[startIndex..<endIndex])
+            } else {
+                exercisesList = []
+            }
+            
+        } else {
+            // When not searching, filter by selected body part with native pagination
+            if selectedBodyPart == .all {
+                exercisesList = try await exerciseRepository.getAllExercises(parameters: parameters)
+            } else {
+                exercisesList = try await exerciseRepository.getExercisesByBodyPart(selectedBodyPart.rawValue, parameters: parameters)
+            }
+        }
+        
+        return exercisesList
+    }
+    
     func selectBodyPart(_ bodyPart: BodyPart) {
         selectedBodyPart = bodyPart
         // Clear search when selecting a category
         searchText = ""
+        resetPagination()
         Task {
             await loadExercises()
         }
     }
+    
+    private func resetPagination() {
+        currentPage = 0
+        canLoadMore = true
+        isLoadingMore = false
+    }
+    
 }

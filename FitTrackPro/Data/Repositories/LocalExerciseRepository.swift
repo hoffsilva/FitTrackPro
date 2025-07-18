@@ -4,10 +4,13 @@ import SwiftData
 protocol LocalExerciseRepositoryProtocol {
     func saveExercises(_ exercises: [Exercise]) async throws
     func getAllExercises() async throws -> [Exercise]
+    func getAllExercises(parameters: PaginationParameters?) async throws -> [Exercise]
     func getExercisesByBodyPart(_ bodyPart: String) async throws -> [Exercise]
+    func getExercisesByBodyPart(_ bodyPart: String, parameters: PaginationParameters?) async throws -> [Exercise]
     func getExercisesByTarget(_ target: String) async throws -> [Exercise]
     func getExercisesByEquipment(_ equipment: String) async throws -> [Exercise]
     func searchExercises(query: String) async throws -> [Exercise]
+    func searchExercises(query: String, bodyPart: String?) async throws -> [Exercise]
     func getExerciseById(_ id: String) async throws -> Exercise?
     func getBodyPartList() async throws -> [String]
     func getTargetList() async throws -> [String]
@@ -41,6 +44,21 @@ class LocalExerciseRepository: LocalExerciseRepositoryProtocol {
         return exerciseDataModels.map { $0.toDomain() }
     }
     
+    func getAllExercises(parameters: PaginationParameters?) async throws -> [Exercise] {
+        var descriptor = FetchDescriptor<ExerciseDataModel>(
+            sortBy: [SortDescriptor(\.name)]
+        )
+        
+        // Apply pagination if provided
+        if let params = parameters {
+            descriptor.fetchLimit = params.limit
+            descriptor.fetchOffset = params.offset
+        }
+        
+        let exerciseDataModels = try modelContext.fetch(descriptor)
+        return exerciseDataModels.map { $0.toDomain() }
+    }
+    
     func getExercisesByBodyPart(_ bodyPart: String) async throws -> [Exercise] {
         let descriptor = FetchDescriptor<ExerciseDataModel>(
             predicate: #Predicate { exercise in
@@ -48,6 +66,24 @@ class LocalExerciseRepository: LocalExerciseRepositoryProtocol {
             },
             sortBy: [SortDescriptor(\.name)]
         )
+        let exerciseDataModels = try modelContext.fetch(descriptor)
+        return exerciseDataModels.map { $0.toDomain() }
+    }
+    
+    func getExercisesByBodyPart(_ bodyPart: String, parameters: PaginationParameters?) async throws -> [Exercise] {
+        var descriptor = FetchDescriptor<ExerciseDataModel>(
+            predicate: #Predicate { exercise in
+                exercise.bodyPart == bodyPart
+            },
+            sortBy: [SortDescriptor(\.name)]
+        )
+        
+        // Apply pagination if provided
+        if let params = parameters {
+            descriptor.fetchLimit = params.limit
+            descriptor.fetchOffset = params.offset
+        }
+        
         let exerciseDataModels = try modelContext.fetch(descriptor)
         return exerciseDataModels.map { $0.toDomain() }
     }
@@ -80,10 +116,42 @@ class LocalExerciseRepository: LocalExerciseRepositoryProtocol {
             predicate: #Predicate { exercise in
                 exercise.name.localizedStandardContains(lowercaseQuery) ||
                 exercise.target.localizedStandardContains(lowercaseQuery) ||
-                exercise.equipment.localizedStandardContains(lowercaseQuery)
+                exercise.equipment.localizedStandardContains(lowercaseQuery) ||
+                exercise.bodyPart.localizedStandardContains(lowercaseQuery)
             },
             sortBy: [SortDescriptor(\.name)]
         )
+        let exerciseDataModels = try modelContext.fetch(descriptor)
+        return exerciseDataModels.map { $0.toDomain() }
+    }
+    
+    func searchExercises(query: String, bodyPart: String?) async throws -> [Exercise] {
+        let lowercaseQuery = query.lowercased()
+        
+        let descriptor: FetchDescriptor<ExerciseDataModel>
+        
+        if let bodyPart = bodyPart {
+            descriptor = FetchDescriptor<ExerciseDataModel>(
+                predicate: #Predicate { exercise in
+                    exercise.bodyPart == bodyPart &&
+                    (exercise.name.localizedStandardContains(lowercaseQuery) ||
+                     exercise.target.localizedStandardContains(lowercaseQuery) ||
+                     exercise.equipment.localizedStandardContains(lowercaseQuery))
+                },
+                sortBy: [SortDescriptor(\.name)]
+            )
+        } else {
+            descriptor = FetchDescriptor<ExerciseDataModel>(
+                predicate: #Predicate { exercise in
+                    exercise.name.localizedStandardContains(lowercaseQuery) ||
+                    exercise.target.localizedStandardContains(lowercaseQuery) ||
+                    exercise.equipment.localizedStandardContains(lowercaseQuery) ||
+                    exercise.bodyPart.localizedStandardContains(lowercaseQuery)
+                },
+                sortBy: [SortDescriptor(\.name)]
+            )
+        }
+        
         let exerciseDataModels = try modelContext.fetch(descriptor)
         return exerciseDataModels.map { $0.toDomain() }
     }

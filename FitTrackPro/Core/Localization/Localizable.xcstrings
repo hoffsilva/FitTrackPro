@@ -61,6 +61,9 @@
     "Cancel" : {
 
     },
+    "Carregando mais..." : {
+
+    },
     "common.cancel" : {
       "extractionState" : "manual",
       "localizations" : {
