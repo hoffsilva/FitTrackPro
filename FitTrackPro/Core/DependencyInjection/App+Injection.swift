@@ -23,6 +23,7 @@ extension Resolver: @retroactive ResolverRegistering {
         register { WorkoutViewModel() }
         register { HomeViewModel() }
         register { ExerciseLibraryViewModel() }
+        register { MyWorkoutsViewModel() }
         
         print("✅ Resolver services registered successfully")
     }
