@@ -172,18 +172,18 @@ struct ExerciseProgressView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Exercise \(currentIndex + 1) of \(totalExercises)")
+                Text("Exercise \(min(currentIndex + 1, totalExercises)) of \(totalExercises)")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.textSecondary)
                 
                 Spacer()
                 
-                Text("\(Int((Double(currentIndex + 1) / Double(totalExercises)) * 100))%")
+                Text("\(Int((min(Double(currentIndex + 1), Double(totalExercises)) / Double(totalExercises)) * 100))%")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.primaryOrange)
             }
             
-            SwiftUI.ProgressView(value: Double(currentIndex + 1), total: Double(totalExercises))
+            SwiftUI.ProgressView(value: min(Double(currentIndex + 1), Double(totalExercises)), total: Double(totalExercises))
                 .progressViewStyle(LinearProgressViewStyle(tint: .primaryOrange))
                 .scaleEffect(y: 2)
         }

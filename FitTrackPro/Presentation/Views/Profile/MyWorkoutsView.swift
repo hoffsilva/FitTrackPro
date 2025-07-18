@@ -2,6 +2,7 @@ import SwiftUI
 import Resolver
 
 struct MyWorkoutsView: View {
+    let workoutViewModel: WorkoutViewModel
     @StateObject private var viewModel: MyWorkoutsViewModel = Resolver.resolve()
     @Environment(\.dismiss) private var dismiss
     
@@ -55,6 +56,7 @@ struct MyWorkoutsView: View {
             .background(.backgroundPrimary)
             .navigationBarHidden(true)
             .onAppear {
+                viewModel.setWorkoutViewModel(workoutViewModel)
                 Task {
                     await viewModel.loadSavedWorkouts()
                 }
@@ -175,5 +177,5 @@ struct MyWorkoutsHeaderView: View {
 }
 
 #Preview {
-    MyWorkoutsView()
+    MyWorkoutsView(workoutViewModel: WorkoutViewModel())
 }

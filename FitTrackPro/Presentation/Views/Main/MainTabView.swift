@@ -1,11 +1,14 @@
 import SwiftUI
+import Resolver
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @StateObject private var sharedWorkoutViewModel: WorkoutViewModel = Resolver.resolve()
     
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView()
+                .environmentObject(sharedWorkoutViewModel)
                 .tabItem {
                     Image(systemName: selectedTab == 0 ? "house.fill" : "house")
                     Text("Home")
@@ -27,6 +30,7 @@ struct MainTabView: View {
                 .tag(2)
             
             ProfileView()
+                .environmentObject(sharedWorkoutViewModel)
                 .tabItem {
                     Image(systemName: selectedTab == 3 ? "person.fill" : "person")
                     Text("Profile")
@@ -34,6 +38,9 @@ struct MainTabView: View {
                 .tag(3)
         }
         .accentColor(.primaryOrange)
+        .fullScreenCover(isPresented: $sharedWorkoutViewModel.isShowingActiveWorkout) {
+            ActiveWorkoutView(workoutViewModel: sharedWorkoutViewModel)
+        }
     }
 }
 

@@ -3,7 +3,7 @@ import Resolver
 
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel = Resolver.resolve()
-    @StateObject private var workoutViewModel: WorkoutViewModel = Resolver.resolve()
+    @EnvironmentObject var workoutViewModel: WorkoutViewModel
     
     var body: some View {
         NavigationView {
@@ -33,9 +33,6 @@ struct HomeView: View {
         }
         .sheet(isPresented: $workoutViewModel.isCreatingWorkout) {
             WorkoutCreationView(workoutViewModel: workoutViewModel)
-        }
-        .fullScreenCover(isPresented: $workoutViewModel.isShowingActiveWorkout) {
-            ActiveWorkoutView(workoutViewModel: workoutViewModel)
         }
     }
 }
@@ -291,4 +288,5 @@ struct RecommendedExerciseCard: View {
 
 #Preview {
     HomeView()
+        .environmentObject(WorkoutViewModel())
 }

@@ -9,6 +9,11 @@ class MyWorkoutsViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     
     @Injected private var workoutRepository: WorkoutRepositoryProtocol
+    private weak var workoutViewModel: WorkoutViewModel?
+    
+    func setWorkoutViewModel(_ viewModel: WorkoutViewModel) {
+        self.workoutViewModel = viewModel
+    }
     
     func loadSavedWorkouts() async {
         isLoading = true
@@ -56,7 +61,12 @@ class MyWorkoutsViewModel: ObservableObject {
             // Set as active workout
             try await workoutRepository.setActiveWorkout(newWorkout)
             
-            // TODO: Navigate to active workout view
+            // Update the main WorkoutViewModel and trigger navigation
+            if let workoutViewModel = workoutViewModel {
+                workoutViewModel.currentWorkout = newWorkout
+                workoutViewModel.hasActiveWorkout = true
+                workoutViewModel.isShowingActiveWorkout = true
+            }
             
         } catch {
             errorMessage = error.localizedDescription
