@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import Resolver
 
 @main
@@ -24,6 +25,18 @@ struct FitTrackProApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+        }
+        .modelContainer(for: [WorkoutDataModel.self, ExerciseDataModel.self]) { result in
+            switch result {
+            case .success(let container):
+                Task { @MainActor in
+                    // Configure Resolver for SwiftData
+                    Resolver.configureForSwiftData(modelContext: container.mainContext)
+                }
+            case .failure(let error):
+                // TODO: Analytics - Track SwiftData setup failure
+                print("Failed to setup SwiftData: \(error)")
+            }
         }
     }
 }

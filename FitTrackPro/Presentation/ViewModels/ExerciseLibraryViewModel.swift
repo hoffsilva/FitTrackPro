@@ -12,7 +12,7 @@ class ExerciseLibraryViewModel: ObservableObject {
     @Published var isSearching: Bool = false
     @Published var errorMessage: String? = nil
     
-    @Injected private var exerciseService: ExerciseServiceProtocol
+    @Injected private var exerciseRepository: ExerciseRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
     
     init() {
@@ -20,8 +20,8 @@ class ExerciseLibraryViewModel: ObservableObject {
     }
     
     // Legacy init for backward compatibility
-    init(exerciseService: ExerciseServiceProtocol) {
-        self.exerciseService = exerciseService
+    init(exerciseRepository: ExerciseRepositoryProtocol) {
+        self.exerciseRepository = exerciseRepository
         setupSearchDebounce()
     }
     
@@ -34,7 +34,7 @@ class ExerciseLibraryViewModel: ObservableObject {
     
     func loadBodyParts() async {
         do {
-            let bodyPartsList = try await exerciseService.getBodyPartList()
+            let bodyPartsList = try await exerciseRepository.getBodyPartList()
             var allBodyParts: [BodyPart] = [.all]
             
             // Convert string body parts to enum and filter valid ones
@@ -73,7 +73,7 @@ class ExerciseLibraryViewModel: ObservableObject {
             
             // If searching, always load all exercises and filter by search term
             if !searchText.isEmpty {
-                exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
+                exercisesList = try await exerciseRepository.getAllExercises(parameters: parameters)
                 exercisesList = exercisesList.filter { exercise in
                     exercise.name.localizedCaseInsensitiveContains(searchText) ||
                     exercise.bodyPart.rawValue.localizedCaseInsensitiveContains(searchText) ||
@@ -83,9 +83,9 @@ class ExerciseLibraryViewModel: ObservableObject {
             } else {
                 // When not searching, filter by selected body part
                 if selectedBodyPart == .all {
-                    exercisesList = try await exerciseService.getAllExercises(parameters: parameters)
+                    exercisesList = try await exerciseRepository.getAllExercises(parameters: parameters)
                 } else {
-                    exercisesList = try await exerciseService.getExercisesByBodyPart(selectedBodyPart.rawValue, parameters: parameters)
+                    exercisesList = try await exerciseRepository.getExercisesByBodyPart(selectedBodyPart.rawValue, parameters: parameters)
                 }
             }
             

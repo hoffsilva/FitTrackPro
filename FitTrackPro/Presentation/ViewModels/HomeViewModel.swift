@@ -14,7 +14,7 @@ class HomeViewModel: ObservableObject {
     @Published var weeklyWorkouts: Int = 0
     @Published var currentStreak: Int = 0
     
-    @Injected private var exerciseService: ExerciseServiceProtocol
+    @Injected private var exerciseRepository: ExerciseRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
     
     init() {
@@ -40,10 +40,10 @@ class HomeViewModel: ObservableObject {
             errorMessage = nil
             
             // Get exercises from different categories for variety
-            async let chestExercises = exerciseService.getExercisesByBodyPart("chest", parameters: PaginationParameters(limit: 3, offset: 0))
-            async let backExercises = exerciseService.getExercisesByBodyPart("back", parameters: PaginationParameters(limit: 3, offset: 0))
-            async let waistExercises = exerciseService.getExercisesByBodyPart("waist", parameters: PaginationParameters(limit: 2, offset: 0))
-            async let shoulderExercises = exerciseService.getExercisesByBodyPart("shoulders", parameters: PaginationParameters(limit: 2, offset: 0))
+            async let chestExercises = exerciseRepository.getExercisesByBodyPart("chest", parameters: PaginationParameters(limit: 3, offset: 0))
+            async let backExercises = exerciseRepository.getExercisesByBodyPart("back", parameters: PaginationParameters(limit: 3, offset: 0))
+            async let waistExercises = exerciseRepository.getExercisesByBodyPart("waist", parameters: PaginationParameters(limit: 2, offset: 0))
+            async let shoulderExercises = exerciseRepository.getExercisesByBodyPart("shoulders", parameters: PaginationParameters(limit: 2, offset: 0))
             
             let allExercises = try await [
                 chestExercises,

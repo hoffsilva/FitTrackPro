@@ -100,6 +100,29 @@ struct LocalizedKeys {
             static let emptyMessage = "progress.achievements.empty.message"
         }
     }
+    
+    // MARK: - Errors
+    struct Errors {
+        struct Exercise {
+            static let notFound = "error.exercise.not_found"
+            static let saveFailed = "error.exercise.save_failed"
+            static let fetchFailed = "error.exercise.fetch_failed"
+            static let syncFailed = "error.exercise.sync_failed"
+        }
+        
+        struct Network {
+            static let noConnection = "error.network.no_connection"
+            static let timeout = "error.network.timeout"
+            static let serverError = "error.network.server_error"
+            static let unauthorized = "error.network.unauthorized"
+            static let rateLimitExceeded = "error.network.rate_limit_exceeded"
+        }
+        
+        struct Data {
+            static let syncInProgress = "error.data.sync_in_progress"
+            static let fallbackMode = "error.data.fallback_mode"
+        }
+    }
 }
 
 // MARK: - Helper Functions for Dynamic Content

@@ -3,7 +3,7 @@ import Resolver
 import SwiftData
 
 // MARK: - Resolver Registration
-extension Resolver: ResolverRegistering {
+extension Resolver: @retroactive ResolverRegistering {
     public static func registerAllServices() {
         // Set default scope
         defaultScope = .graph
@@ -12,8 +12,11 @@ extension Resolver: ResolverRegistering {
         register { InMemoryWorkoutRepository() as WorkoutRepositoryProtocol }
             .scope(.application)
         
-        register { ExerciseService() as ExerciseServiceProtocol }
-            .scope(.application)
+        // Register exercise repository (remote-only by default)
+        register { 
+            HybridExerciseRepository(remoteService: ExerciseServiceRemoteOnly()) as ExerciseRepositoryProtocol 
+        }
+        .scope(.application)
         
         // Register ViewModels
         register { ProgressViewModel() }
@@ -28,10 +31,37 @@ extension Resolver: ResolverRegistering {
 // MARK: - SwiftData Configuration
 extension Resolver {
     /// Configure Resolver to use SwiftData repositories when ModelContext is available
+    @MainActor
     public static func configureForSwiftData(modelContext: ModelContext) {
         // Replace InMemoryWorkoutRepository with SwiftDataWorkoutRepository
         register { SwiftDataWorkoutRepository(modelContext: modelContext) as WorkoutRepositoryProtocol }
             .scope(.application)
+        
+        // Register local exercise repository
+        register { LocalExerciseRepository(modelContext: modelContext) as LocalExerciseRepositoryProtocol }
+            .scope(.application)
+        
+        // Register exercise data sync service
+        register {
+            let localRepo: LocalExerciseRepositoryProtocol = resolve()
+            return ExerciseDataSeedingService(
+                remoteExerciseService: ExerciseServiceRemoteOnly(),
+                localExerciseRepository: localRepo
+            ) as ExerciseDataSyncProtocol
+        }
+        .scope(.application)
+        
+        // Replace exercise repository with hybrid version (with local fallback)
+        register {
+            let localRepo: LocalExerciseRepositoryProtocol = resolve()
+            let syncService: ExerciseDataSyncProtocol = resolve()
+            return HybridExerciseRepository(
+                remoteService: ExerciseServiceRemoteOnly(),
+                localRepository: localRepo,
+                syncService: syncService
+            ) as ExerciseRepositoryProtocol
+        }
+        .scope(.application)
         
         print("✅ Resolver configured for SwiftData")
     }
