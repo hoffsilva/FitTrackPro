@@ -101,6 +101,32 @@ struct LocalizedKeys {
         }
     }
     
+    // MARK: - Profile
+    struct Profile {
+        static let title = "profile.title"
+        static let editProfile = "profile.edit_profile"
+        static let myWorkouts = "profile.my_workouts"
+        static let notifications = "profile.notifications"
+        static let privacy = "profile.privacy"
+        static let helpSupport = "profile.help_support"
+        static let about = "profile.about"
+        static let settings = "profile.settings"
+        
+        struct MyWorkouts {
+            static let title = "profile.my_workouts.title"
+            static let subtitle = "profile.my_workouts.subtitle"
+            static let emptyTitle = "profile.my_workouts.empty.title"
+            static let emptyMessage = "profile.my_workouts.empty.message"
+            static let saveWorkoutButton = "profile.my_workouts.save_workout"
+            static let useWorkoutButton = "profile.my_workouts.use_workout"
+            static let deleteWorkout = "profile.my_workouts.delete_workout"
+            static let savePromptTitle = "profile.my_workouts.save_prompt.title"
+            static let savePromptMessage = "profile.my_workouts.save_prompt.message"
+            static let savePromptSave = "profile.my_workouts.save_prompt.save"
+            static let savePromptSkip = "profile.my_workouts.save_prompt.skip"
+        }
+    }
+    
     // MARK: - Errors
     struct Errors {
         struct Exercise {
