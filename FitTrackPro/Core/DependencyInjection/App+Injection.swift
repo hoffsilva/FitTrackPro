@@ -21,7 +21,6 @@ extension Resolver: @retroactive ResolverRegistering {
         // Register ViewModels
         register { ProgressViewModel() }
         register { WorkoutViewModel() }
-            .scope(.shared)  // Shared across the entire app
         register { HomeViewModel() }
         register { ExerciseLibraryViewModel() }
         register { MyWorkoutsViewModel() }
