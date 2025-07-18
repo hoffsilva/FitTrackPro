@@ -88,6 +88,9 @@ struct ActiveWorkoutView: View {
     private func nextExercise() {
         if canGoNext {
             currentExerciseIndex += 1
+        } else {
+            // If we can't go next (last exercise), move to completion state
+            currentExerciseIndex = workoutViewModel.currentWorkout?.exercises.count ?? 0
         }
     }
     
