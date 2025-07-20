@@ -19,13 +19,12 @@ FitTrackPro/
 ├── Data/            # Data layer
 │   ├── Repositories/ # Repository implementations
 │   ├── DataSources/  # Data sources
-│   │   ├── Local/    # Local data (Core Data, UserDefaults)
+│   │   ├── Local/    # Local data (SwiftData, UserDefaults)
 │   │   └── Remote/   # Remote APIs and services
 │   └── Models/       # Data models
 ├── Presentation/     # User interface
 │   ├── Views/        # SwiftUI Views
-│   ├── ViewModels/   # ViewModels (MVVM)
-│   └── Controllers/  # Controllers
+│   └── ViewModels/   # ViewModels (MVVM)
 └── Core/            # Utilities and extensions
     ├── Extensions/   # Swift/SwiftUI extensions
     ├── Utilities/    # Utility functions
