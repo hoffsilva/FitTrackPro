@@ -67,6 +67,10 @@ The project uses the **ExerciseDB API** via RapidAPI to fetch exercise data:
 - Automatic caching and optimization
 - Smooth loading with placeholders
 
+## 🎬 Demo Video
+
+[📱 Watch App Demo](demo-fittrackpro.mov)
+
 ## 🚀 How to Run
 
 1. Clone the repository:
