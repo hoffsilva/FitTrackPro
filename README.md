@@ -69,7 +69,7 @@ The project uses the **ExerciseDB API** via RapidAPI to fetch exercise data:
 
 ## 🎬 Demo Video
 
-[📱 Watch App Demo](demo-fittrackpro.mov)
+[📱 Watch App Demo](demo-fittrackpro.mp4)
 
 ## 🚀 How to Run
 
