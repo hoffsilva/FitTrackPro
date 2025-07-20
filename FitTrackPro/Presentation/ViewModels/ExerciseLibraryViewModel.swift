@@ -17,7 +17,7 @@ class ExerciseLibraryViewModel: ObservableObject {
     @Injected private var exerciseRepository: ExerciseRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
     private var currentPage: Int = 0
-    private let pageSize: Int = 20 // Optimal for production - balance between performance and UX
+    private let pageSize: Int = 10
     
     init() {
         setupSearchDebounce()

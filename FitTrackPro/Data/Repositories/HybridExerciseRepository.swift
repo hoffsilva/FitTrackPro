@@ -28,7 +28,7 @@ class HybridExerciseRepository: ExerciseRepositoryProtocol {
             guard let localRepo = localRepository else {
                 throw ExerciseRepositoryError.noFallbackAvailable
             }
-            return try await localRepo.getAllExercises()
+            return try await localRepo.getAllExercises(parameters: parameters)
         }
     }
     
@@ -40,7 +40,7 @@ class HybridExerciseRepository: ExerciseRepositoryProtocol {
             guard let localRepo = localRepository else {
                 throw ExerciseRepositoryError.noFallbackAvailable
             }
-            return try await localRepo.getExercisesByBodyPart(bodyPart)
+            return try await localRepo.getExercisesByBodyPart(bodyPart, parameters: parameters)
         }
     }
     
